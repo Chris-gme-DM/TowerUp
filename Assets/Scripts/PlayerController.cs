@@ -11,7 +11,10 @@ public class PlayerController : MonoBehaviour
     // To allow the setting of character movement Speed in Unity
     [Range(0f, 50f)] public float maxSpeed;
     // To allow the setting of character Jump Force in Unity
-    [Range(150f, 300f)] public float jumpForce;
+    [Range(150f, 1000f)] public float jumpForce;
+    // A Cooldwn for the JumpAction
+    [Range(0f, 1f)] public float jumpCooldown;
+
 
     // Variables for Script
     // Reference to Player Input
@@ -25,6 +28,8 @@ public class PlayerController : MonoBehaviour
 
     // To set a condition to check if the player is on a ground surface
     private bool isGrounded;
+    // To set a kind of a cooldown for Jumps
+    private bool canJump;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -37,6 +42,7 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Jump"].performed += onJump;
 
         cameraTransform = Camera.main.transform;
+        canJump = true;
     }
 
     public void onMove(CallbackContext ctx)
@@ -46,27 +52,35 @@ public class PlayerController : MonoBehaviour
     }
     public void onJump(CallbackContext ctx) 
     {
-        if (!isGrounded) return;
-        rb.AddForce(Vector3.up * jumpForce);
+        if (!isGrounded || !canJump) return;
+        rb.AddForce(Vector3.up * jumpForce, ForceMode.Force);
+
+        canJump = false;
+        Invoke(nameof(ResetJump), jumpCooldown);
+    }
+    // A Jump Reset to not abuse the Jump mehcanic and make Wall Runs smoother
+    private void ResetJump()
+    {
+        canJump = true;
     }
     // Update is called once per frame
     void FixedUpdate()
     {
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
         if (moveInput != Vector2.zero)
         {
             var moveDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
             moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
             if (!isGrounded) return;
-            rb.AddForce(moveDirection * accelaration, ForceMode.Force);
-            if (rb.linearVelocity.magnitude > maxSpeed)
+            if (horizontalVelocity.magnitude < maxSpeed)
             {
-                rb.maxLinearVelocity = maxSpeed;
+                rb.AddForce(moveDirection * accelaration, ForceMode.Force);
             }
-        //    rb.MovePosition(transform.position + moveDirection * moveSpeed * Time.deltaTime);
         }
-        else
+        // Deceleration of the player
+        else if(isGrounded)
         {
-            rb.AddForce(rb.linearVelocity * Mathf.Max(-decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
+            rb.AddForce(horizontalVelocity * Mathf.Max(-decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
         }
     }
     private void OnCollisionStay(Collision collision)

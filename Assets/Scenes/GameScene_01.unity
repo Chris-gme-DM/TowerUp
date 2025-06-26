@@ -499,10 +499,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a4ab4640ae7cec4da2070c167b6590c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  accelaration: 40
+  accelaration: 30
   decelaration: 40
-  maxSpeed: 12
-  jumpForce: 268
+  maxSpeed: 8
+  jumpForce: 400
+  jumpCooldown: 0.2
 --- !u!1 &1559293222
 GameObject:
   m_ObjectHideFlags: 0
