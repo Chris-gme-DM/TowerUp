@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (moveInput != null)
+        if (moveInput != Vector2.zero)
         {
             var moveDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
             moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            rb.AddForce(rb.linearVelocity * -decelaration, ForceMode.Force);
+            rb.AddForce(rb.linearVelocity * Mathf.Max(-decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
         }
     }
     private void OnCollisionStay(Collision collision)
