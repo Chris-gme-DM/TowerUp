@@ -1,16 +1,14 @@
+using System;
 using UnityEngine;
 
 public class JumpFromGround : State
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void OnEnter()
     {
+        Debug.Log("I am jumping");
+        base.OnEnter();
         
-    }
+        rb.AddForce(Vector3.up * pc.jumpForce, ForceMode.Impulse);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

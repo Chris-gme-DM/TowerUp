@@ -1,9 +1,12 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.XR;
 // I just want to keep my States clean
 public class StateController : MonoBehaviour
 {
     public PlayerController playerController;
+    public Vector2 currentInput;
 
     State currentState;
 
@@ -17,45 +20,35 @@ public class StateController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playerController = GetComponent<PlayerController>();
         //Instantiate the States to ensure they are ready throughout the LifeCycle
-        idleState = new();
-        groundRunning = new();
-        wallRunning = new();
-        jumpingFromGround = new();
-        jumpingFromWall = new();
-        climbWall = new();
-        airBourne = new();
+        idleState = new IdleState();
+        groundRunning = new GroundRunning();
+        wallRunning = new WallRunning();
+        jumpingFromGround = new JumpFromGround();
+        jumpingFromWall = new JumpFromWall();
+        climbWall = new ClimbWall();
+        airBourne = new AirBourne();
 
         ChangeState(idleState);
-    }
-    public void HandleState()
-    {
-        currentState?.OnStateUpdate();
     }
     // Update is called once per frame
     void Update()
     {
-        if (currentState != null)
-        {
-            currentState.OnStateUpdate();
-        }
+        currentState?.OnStateUpdate();
     }
     public void FixedUpdate()
     {
-        currentState?.OnFixedUpdate();
+        currentState?.OnStateFixedUpdate();
     }
     public void ChangeState(State newState)
     {
-        if (currentState != null)
-        {
-            currentState.OnStateExit();
-        }
+        if(newState == currentState) return;
+        currentState?.OnStateExit();
         currentState = newState;
-        currentState.OnStateEnter(this);
+        currentState.OnStateEnter(this, playerController);
     }
-    public void ProcessInput()
+    public void SetMoveInput(Vector2 moveInput)
     {
-
+        currentInput = moveInput;
     }
 }

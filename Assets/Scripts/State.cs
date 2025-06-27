@@ -2,27 +2,45 @@ using UnityEngine;
 
 public abstract class State
 {
-    public StateController sc;
-
-    public void OnStateEnter(StateController stateController)
+    protected PlayerController pc;
+    protected StateController sc;
+    protected Rigidbody rb;
+    protected Transform cameraTransform;
+    protected Vector2 moveInput;
+    public void OnStateEnter(StateController stateController, PlayerController playerController)
     {
         sc = stateController;
+        pc = playerController;
+        rb = pc.rb;
+        cameraTransform = pc.cameraTransform;
         OnEnter();
     }
-    protected virtual void OnEnter()
+    public virtual void OnEnter()
     {
+        rb.useGravity = true;
+
         //Activate its Animation
+        Debug.Log("I entered a state");
     }
     public void OnStateUpdate() 
     {
+        moveInput = pc.moveInput;
         OnUpdate(); 
     }
-    protected virtual void OnUpdate()
+    public virtual void OnUpdate()
     {
         // Callback the Update Function of any give State
     }
-    public void OnFixedUpdate() { FixedUpdate(); }
-    protected virtual void FixedUpdate() { }
+    public void OnStateFixedUpdate() { OnFixedUpdate(); }
+    public virtual void OnFixedUpdate()
+    {
+        rb.useGravity = true;
+        // Continious Movement needs to be handled here
+    }
     public void OnStateExit() { OnExit(); }
-    protected virtual void OnExit() { }
+    public virtual void OnExit()
+    {
+        rb.useGravity = true;
+        Debug.Log("I left my current State");
+    }
 }

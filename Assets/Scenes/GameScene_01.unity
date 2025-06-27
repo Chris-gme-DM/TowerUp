@@ -564,7 +564,7 @@ Transform:
   m_GameObject: {fileID: 1329646654}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.37, y: 2.68, z: -4.02}
+  m_LocalPosition: {x: 6.37, y: 1, z: -4.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -717,13 +717,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   stateController: {fileID: 1605628058}
-  accelaration: 30
+  accelaration: 40
   decelaration: 40
-  maxSpeed: 16
-  groundSpeed: 12
-  wallRunSpeed: 12
-  jumpForce: 400
-  jumpCooldown: 0.2
+  maxSpeed: 30
+  groundSpeed: 17
+  wallRunSpeed: 20
+  jumpForce: 50.4
+  jumpCooldown: 0.4
+  playerInput: {fileID: 0}
+  rb: {fileID: 0}
+  moveInput: {x: 0, y: 0}
+  cameraTransform: {fileID: 0}
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -1189,6 +1193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 1329646662}
+  currentInput: {x: 0, y: 0}
 --- !u!1 &1712416005
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1485,7 @@ Transform:
   m_GameObject: {fileID: 1961781015}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.37, y: 3.42, z: -4.02}
+  m_LocalPosition: {x: 6.37, y: 1.74, z: -4.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -1,16 +1,40 @@
+using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GroundRunning : State
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private Vector3 horizontalVelocity;
+    private Vector3 moveDirection;
+    public override void OnEnter() { base.OnEnter(); }
+    public override void OnUpdate()
     {
-        
+        base.OnUpdate();
+        moveDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
+        moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
+
+    }
+    public override void OnFixedUpdate() 
+    {
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        Debug.Log(horizontalVelocity);
+        // Define horizontal Velocity to exclude y-Forces from the equations
+        if (horizontalVelocity.magnitude < pc.groundSpeed)
+        {
+            if (moveDirection.magnitude > 0.01f)
+            {
+                rb.AddForce(moveDirection * pc.accelaration, ForceMode.Force);
+            }
+            if(horizontalVelocity.magnitude > pc.groundSpeed)
+            {
+                rb.maxLinearVelocity = pc.groundSpeed;
+            }
+        }
+    
+    }
+    public override void OnExit()
+    {
+        base.OnExit();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -1,16 +1,16 @@
+using System;
 using UnityEngine;
 
 public class AirBourne : State
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void OnEnter()
     {
-        
+        base.OnEnter();
     }
-
-    // Update is called once per frame
-    void Update()
+    public override void OnFixedUpdate()
     {
-        
+        base.OnFixedUpdate();
+        rb.useGravity = true;
     }
+    public override void OnExit() { base.OnExit(); }
 }

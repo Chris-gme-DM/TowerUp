@@ -27,20 +27,20 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jumping")]
     // To allow the setting of character Jump Force in Unity
-    [Range(150f, 1000f)] public float jumpForce;
+    [Range(10f, 80f)] public float jumpForce;
     // A Cooldwn for the JumpAction
     [Range(0f, 1f)] public float jumpCooldown;
 
 
     // Variables for Script
     // Reference to Player Input
-    private PlayerInput playerInput;
+    public PlayerInput playerInput;
     // Reference to the physics of the PlayerObject
-    private Rigidbody rb;
+    public Rigidbody rb;
     // Movement Input reading
-    private Vector2 moveInput;
+    public Vector2 moveInput;
     // Reference for the camera to Enable look around
-    private Transform cameraTransform;
+    public Transform cameraTransform;
 
     [Header("CollisionChecks")]
     public LayerMask whatIsGround;
@@ -67,7 +67,6 @@ public class PlayerController : MonoBehaviour
         //Get Rigidbody and PlayerInput for access
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
-        stateController = GetComponent<StateController>();
         // Get Player Height
         playerHeight = GetComponent<CapsuleCollider>().height;
         // Subscribe to InputActions
@@ -79,17 +78,16 @@ public class PlayerController : MonoBehaviour
         cameraTransform = Camera.main.transform;
         // Set Jumpability
         canJump = true;
+        jumpPressed = false;
     }
     private void Update()
     {
         // Checks conditions and notifies the StateController about any changes
         CheckState();
-
-        stateController.HandleState();
     }
     // Implemented a StateMachine Architecture, which turned StateHandler() and the movementStates unnecessary.
     // PlayerController should just constantly Check the State the player is in and their Input and leave State Handling to StateController
-    #region StateMachine in PlayerController, which is now handled by a StateMachine Script called StateController
+    #region OLD StateMachine in PlayerController, NEW which is now handled by a StateMachine Script called StateController
     //public MovementState movementState;
 
     //public enum MovementState
@@ -165,40 +163,47 @@ public class PlayerController : MonoBehaviour
         GroundCheck();
         wallRunning = WallCheck();
 
-        if (isGrounded && moveInput == Vector2.zero)
+        if (jumpPressed && wallRunning)
         {
-            NotifyStateChange(stateController.idleState);
-        }
-        else if (isGrounded && moveInput != Vector2.zero)
-        {
-            NotifyStateChange(stateController.groundRunning);
-        }
-        else if (wallRunning)
-        {
-            NotifyStateChange(stateController.wallRunning);
+            NotifyStateChange(stateController.jumpingFromWall);
+            Debug.Log("Should be jumping from the wall now");
         }
         else if (jumpPressed && isGrounded)
         {
             NotifyStateChange(stateController.jumpingFromGround);
+            Debug.Log("Should be jumping now");
         }
-        else if (jumpPressed && wallRunning)
+        else if (isGrounded && moveInput != Vector2.zero)
         {
-            NotifyStateChange(stateController.jumpingFromWall);
+            NotifyStateChange(stateController.groundRunning);
+            Debug.Log("Should be walking now");
+        }
+        else if (wallRunning)
+        {
+            NotifyStateChange(stateController.wallRunning);
+            Debug.Log("Should be wallrunning now");
+        }
+        else if (isGrounded && moveInput == Vector2.zero)
+        {
+            NotifyStateChange(stateController.idleState);
+            Debug.Log("Should be Idle now");
         }
         else
         {
             NotifyStateChange(stateController.airBourne);
+            Debug.Log("Should be airbourne now");
         }
+
     }
     private bool GroundCheck()
     {
-        Ray ray = new Ray(transform.position, Vector3.down);
+        Ray ray = new(transform.position, Vector3.down);
         Debug.DrawRay(transform.position, Vector3.down * (playerHeight*0.5f), Color.red , 0.1f);
         return isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, whatIsGround);
     }
     private bool WallCheck()
     {
-        Ray ray = new Ray(transform.position, Vector3.forward);
+        Ray ray = new(transform.position, Vector3.forward);
         Debug.DrawRay(transform.position, transform.forward * 1f, Color.red, 0.1f);
         return Physics.Raycast(ray, 1f, whatIsWall);
     }
@@ -206,15 +211,19 @@ public class PlayerController : MonoBehaviour
     {
         //Reads PlayerInput
         moveInput = ctx.ReadValue<Vector2>();
+        //Passes every current Input on to StateMachine
+        stateController.SetMoveInput(moveInput);
     }
     // JumpFunction MOVE to JumpFromWall or JumpFromGround
     public void onJump(CallbackContext ctx) 
     {
         // Only Jump if it's not on cooldown and the Player is Grounded
-        // Using Force to Jump, Impulse would overwrite horizontal Velocity
-    //    rb.AddForce(Vector3.up * jumpForce, ForceMode.Force);
         // Sets Jumping to true and together with the state if the player is on ground or not fires respective State
-        if(canJump) { jumpPressed = true; }
+        if(canJump)
+        { 
+            canJump = false;
+            jumpPressed = true;
+        }
         //Set a Cooldown for the Jump
         Invoke(nameof(ResetJump), jumpCooldown);
     }
@@ -223,34 +232,9 @@ public class PlayerController : MonoBehaviour
     private void ResetJump()
     {
         canJump = true;
+        jumpPressed = false;
     }
     #endregion
-    // MOVE MovePlayerOnGround to GroundRunning Script and adjust it
-    private void MovePlayerOnGround()
-    {
-        // Define horizontal Velocity to exclude y-Forces from the equations
-        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-
-        //if (moveInput != Vector2.zero)
-        //{
-        //    var moveDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
-        //    moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
-        //    if (!isGrounded) return;
-        //    if (horizontalVelocity.magnitude < maxSpeed)
-        //    {
-        //        rb.AddForce(moveDirection * accelaration, ForceMode.Force);
-        //    }
-        //}
-        //// Deceleration of the player
-        //else if(isGrounded)
-        //{
-        //    rb.AddForce(horizontalVelocity * Mathf.Max(-decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
-        //}
-
-    }
-
-
-
 // Since GroundCheck() should make CollisionChecks obsolete
     //private void OnCollisionStay(Collision collision)
     //{
