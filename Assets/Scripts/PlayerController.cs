@@ -37,6 +37,13 @@ public class PlayerController : MonoBehaviour
     [Range(0f, 50f)] public float wallRunSpeed;
     public float wallCheckDistance;
     public float minJumpHeight;
+    //limitations of wallrunning
+    public float maxWallRunTime;
+    public float wallRunTimer;
+    public float endWallRunTime;
+    public float endWallRunTimer;
+    public bool endWallRunning;
+
     // Variables for Script
     // Reference to Player Input
     public PlayerInput playerInput;

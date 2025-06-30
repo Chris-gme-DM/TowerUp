@@ -6,9 +6,10 @@ public class JumpFromWall : State
     public override void OnEnter()
     {
         base.OnEnter();
-        rb.maxLinearVelocity = pc.wallRunSpeed;
+        // Determine side of the wall
+        Vector3 wallNormal = pc.rightWall ? pc.rightWallHit.normal : pc.leftWallHit.normal;
 
-        rb.AddForce(0.5f* pc.jumpForce, 0.5f*pc.jumpForce, 0.5f*pc.jumpForce, ForceMode.Force);
+        rb.AddForce(rb.transform.up * pc.jumpForce * 0.7f + wallNormal * pc.jumpForce * 0.7f, ForceMode.Force);
     }
     public override void OnExit()
     {

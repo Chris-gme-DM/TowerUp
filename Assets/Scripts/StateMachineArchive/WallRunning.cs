@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class WallRunning : State
 {
-    public float WallRunTimer;
 
     public override void OnEnter()
     {
         base.OnEnter();
         rb.maxLinearVelocity = pc.wallRunSpeed;
-        WallRunTimer = 0;
+        WallRunTimer = maxWallRunTime;
     }
     public override void OnUpdate()
     {
@@ -40,7 +39,7 @@ public class WallRunning : State
     public override void OnExit()
     {
         base.OnExit();
-        WallRunTimer = 0;
+        pc.wallRunTime = 0;
         rb.maxLinearVelocity = 50f;
     }
 }
