@@ -17,7 +17,6 @@ public class GroundRunning : State
     public override void OnFixedUpdate() 
     {
         Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
-        Debug.Log(horizontalVelocity);
         // Define horizontal Velocity to exclude y-Forces from the equations
         if (horizontalVelocity.magnitude < pc.groundSpeed)
         {
@@ -27,7 +26,8 @@ public class GroundRunning : State
             }
             if(horizontalVelocity.magnitude > pc.groundSpeed)
             {
-                rb.maxLinearVelocity = pc.groundSpeed;
+                Vector3 limitedHorizonatlVelocity = horizontalVelocity.normalized * pc.groundSpeed;
+                rb.linearVelocity = new Vector3(limitedHorizonatlVelocity.x, 0 , limitedHorizonatlVelocity.z);
             }
         }
     
@@ -35,6 +35,7 @@ public class GroundRunning : State
     public override void OnExit()
     {
         base.OnExit();
+        rb.maxLinearVelocity = 50f;
     }
 
 }

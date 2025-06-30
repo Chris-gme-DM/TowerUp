@@ -3,16 +3,17 @@ using UnityEngine;
 
 public class JumpFromWall : State
 {
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override void OnEnter()
     {
-        
+        base.OnEnter();
+        rb.maxLinearVelocity = pc.wallRunSpeed;
+
+        rb.AddForce(0.5f* pc.jumpForce, 0.5f*pc.jumpForce, 0.5f*pc.jumpForce, ForceMode.Force);
+    }
+    public override void OnExit()
+    {
+        base.OnExit();
+        rb.maxLinearVelocity = 50f;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

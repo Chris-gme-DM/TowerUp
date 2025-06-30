@@ -18,10 +18,15 @@ public class IdleState : State
         rb.useGravity = true;
 
         // Deceleration of the player
-        Vector3 transform = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, rb.linearVelocity.z);
+        Vector3 horizontalVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
 
+        if(horizontalVelocity.magnitude > 0.01f)
         {
-            rb.AddForce(transform * Mathf.Max(-pc.decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
+            rb.AddForce(horizontalVelocity * Mathf.Max(-pc.decelaration, -rb.linearVelocity.magnitude), ForceMode.Force);
+            if (horizontalVelocity.magnitude > 0.1f)
+            {
+                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            }
         }
 
     }

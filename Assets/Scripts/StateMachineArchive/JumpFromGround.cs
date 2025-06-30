@@ -8,7 +8,7 @@ public class JumpFromGround : State
         Debug.Log("I am jumping");
         base.OnEnter();
         
-        rb.AddForce(Vector3.up * pc.jumpForce, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * pc.jumpForce, ForceMode.Force);
 
     }
 }

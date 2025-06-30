@@ -4,6 +4,8 @@ using UnityEngine.PlayerLoop;
 using static UnityEngine.InputSystem.InputAction;
 
 // I will try to rewrite PlayerController into a form of StateMachine
+// I rewerote the PlayerController into a Form of InputManager who checks in which state the player should be in and what inputs he gives.
+// These information will be transported to the statemachine that delivers the information. although i am sure i made redundancies
 public class PlayerController : MonoBehaviour
 {
 #region Unity UI
@@ -23,15 +25,18 @@ public class PlayerController : MonoBehaviour
     // Speed when the character is on a slope
  //ADD IF time >= 0   [Range(0f, 50f)] public float maxSlopeSpeed;
     // Speed when the character is Wallrunning
-    [Range(0f, 50f)] public float wallRunSpeed;
 
     [Header("Jumping")]
     // To allow the setting of character Jump Force in Unity
-    [Range(10f, 80f)] public float jumpForce;
+    [Range(100f, 400f)] public float jumpForce;
     // A Cooldwn for the JumpAction
     [Range(0f, 1f)] public float jumpCooldown;
 
-
+    [Header("WallRun")]
+    [Range(0f, 500f)] public float wallRunForce;
+    [Range(0f, 50f)] public float wallRunSpeed;
+    public float wallCheckDistance;
+    public float minJumpHeight;
     // Variables for Script
     // Reference to Player Input
     public PlayerInput playerInput;
@@ -45,20 +50,25 @@ public class PlayerController : MonoBehaviour
     [Header("CollisionChecks")]
     public LayerMask whatIsGround;
     public LayerMask whatIsWall;
+    public RaycastHit leftWallHit;
+    public RaycastHit rightWallHit;
+
     #endregion
-#region Booleans
+    #region Booleans
     // To set a condition to check if the player is on a ground surface
     public bool isGrounded;
     // Will check if Jump is pressed and based on condition if player is on ground or not give the respective StateChange
     public bool jumpPressed;
     // To set a kind of a cooldown for Jumps
     public bool canJump;
-    // Set if the character is currently running a wall
-    public bool wallRunning;
+    // to check which side the wall is on
+    public bool leftWall;
+    public bool rightWall;
+
     // Set if character pressed slide
- //IF time > 0   public bool slidePressed;
+    //IF time > 0   public bool slidePressed;
     // PlayerHeight to Check Raycast Hit on Ground
-    private float playerHeight;
+    public float playerHeight;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -79,6 +89,7 @@ public class PlayerController : MonoBehaviour
         // Set Jumpability
         canJump = true;
         jumpPressed = false;
+        rb.useGravity = true;
     }
     private void Update()
     {
@@ -161,51 +172,53 @@ public class PlayerController : MonoBehaviour
     private void CheckState()
     {
         GroundCheck();
-        wallRunning = WallCheck();
+        AboveGround();
+        Debug.Log(AboveGround());
+        WallCheck();
 
-        if (jumpPressed && wallRunning)
+        if ((leftWall || rightWall) && jumpPressed && AboveGround())
         {
             NotifyStateChange(stateController.jumpingFromWall);
-            Debug.Log("Should be jumping from the wall now");
+        }
+        else if ((leftWall || rightWall) && !isGrounded && AboveGround())
+        {
+            NotifyStateChange(stateController.wallRunning);
+            Debug.Log("Schould be running the wall");
         }
         else if (jumpPressed && isGrounded)
         {
             NotifyStateChange(stateController.jumpingFromGround);
-            Debug.Log("Should be jumping now");
         }
         else if (isGrounded && moveInput != Vector2.zero)
         {
             NotifyStateChange(stateController.groundRunning);
-            Debug.Log("Should be walking now");
-        }
-        else if (wallRunning)
-        {
-            NotifyStateChange(stateController.wallRunning);
-            Debug.Log("Should be wallrunning now");
         }
         else if (isGrounded && moveInput == Vector2.zero)
         {
             NotifyStateChange(stateController.idleState);
-            Debug.Log("Should be Idle now");
         }
         else
         {
             NotifyStateChange(stateController.airBourne);
-            Debug.Log("Should be airbourne now");
         }
 
     }
     private bool GroundCheck()
     {
         Ray ray = new(transform.position, Vector3.down);
-        Debug.DrawRay(transform.position, Vector3.down * (playerHeight*0.5f), Color.red , 0.1f);
         return isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, whatIsGround);
     }
-    private bool WallCheck()
+    private void WallCheck()
     {
-        Ray ray = new(transform.position, Vector3.forward);
-        Debug.DrawRay(transform.position, transform.forward * 1f, Color.red, 0.1f);
-        return Physics.Raycast(ray, 1f, whatIsWall);
+        Ray ray = new(cameraTransform.transform.position, Vector3.forward);
+        leftWall = Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
+        rightWall = Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
+        Debug.Log(leftWall);
+        Debug.Log(rightWall);
+    }
+    private bool AboveGround()
+    {
+        return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
     }
     public void onMove(CallbackContext ctx)
     {

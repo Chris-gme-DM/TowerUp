@@ -20,7 +20,6 @@ public abstract class State
         rb.useGravity = true;
 
         //Activate its Animation
-        Debug.Log("I entered a state");
     }
     public void OnStateUpdate() 
     {
@@ -34,13 +33,10 @@ public abstract class State
     public void OnStateFixedUpdate() { OnFixedUpdate(); }
     public virtual void OnFixedUpdate()
     {
-        rb.useGravity = true;
         // Continious Movement needs to be handled here
     }
     public void OnStateExit() { OnExit(); }
     public virtual void OnExit()
     {
-        rb.useGravity = true;
-        Debug.Log("I left my current State");
     }
 }

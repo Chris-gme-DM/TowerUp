@@ -46,6 +46,7 @@ public class StateController : MonoBehaviour
         currentState?.OnStateExit();
         currentState = newState;
         currentState.OnStateEnter(this, playerController);
+        Debug.Log(newState);
     }
     public void SetMoveInput(Vector2 moveInput)
     {
