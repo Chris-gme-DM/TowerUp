@@ -3,16 +3,27 @@ using UnityEngine;
 
 public class WallRunning : State
 {
+    //public float rotationSpeed = 3f;
+    //public float tiltAngle = 45f;
 
+    //private Quaternion currentRotation;
+    //private Quaternion targetRotation;
     public override void OnEnter()
     {
         base.OnEnter();
+        // Clamp velocity to prevent infinite acceleration
         rb.maxLinearVelocity = pc.wallRunSpeed;
-        WallRunTimer = maxWallRunTime;
+        // Reset Timer when starting wall run
+        pc.wallRunTimer = pc.maxWallRunTime;
+        //rb.freezeRotation = false;
+
     }
     public override void OnUpdate()
     {
         base.OnUpdate();
+        if(pc.wallRunTimer > 0)
+            pc.wallRunTimer -= Time.deltaTime;
+
     }
     public override void OnFixedUpdate()
     {
@@ -32,14 +43,24 @@ public class WallRunning : State
         // Force forward
         rb.AddForce(wallForward * pc.wallRunForce, ForceMode.Force);
 
+        // Adjust rotation for immersion while running the wall, readjust the rotation while airbourne
+        //Vector3 tiltAxis = Vector3.Cross(rb.transform.forward, wallNormal).normalized;
+        //targetRotation = Quaternion.AngleAxis(tiltAngle, tiltAxis);
+        //currentRotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotationSpeed);
+
         // Pin the player to wall
-        if(!(pc.leftWall && moveInput.sqrMagnitude > 0) && !(pc.rightWall && moveInput.sqrMagnitude > 0))
+        if (!(pc.leftWall && moveInput.sqrMagnitude > 0) && !(pc.rightWall && moveInput.sqrMagnitude > 0))
             rb.AddForce(-wallNormal*10, ForceMode.Force);
+        // Force the player from the wall as soon as the timer runs out
+        if(pc.wallRunTimer <= 0) 
+            rb.AddForce(wallNormal*10, ForceMode.Force);
+
     }
+
     public override void OnExit()
     {
         base.OnExit();
-        pc.wallRunTime = 0;
+        pc.endWallRunTimer = pc.endWallRunTime;
         rb.maxLinearVelocity = 50f;
     }
 }

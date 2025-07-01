@@ -42,7 +42,6 @@ public class PlayerController : MonoBehaviour
     public float wallRunTimer;
     public float endWallRunTime;
     public float endWallRunTimer;
-    public bool endWallRunning;
 
     // Variables for Script
     // Reference to Player Input
@@ -102,6 +101,10 @@ public class PlayerController : MonoBehaviour
     {
         // Checks conditions and notifies the StateController about any changes
         CheckState();
+
+        // Count EndWallRunTimer
+        if(endWallRunTimer > 0)
+            endWallRunTimer -= Time.deltaTime;
     }
     // Implemented a StateMachine Architecture, which turned StateHandler() and the movementStates unnecessary.
     // PlayerController should just constantly Check the State the player is in and their Input and leave State Handling to StateController
@@ -187,7 +190,7 @@ public class PlayerController : MonoBehaviour
         {
             NotifyStateChange(stateController.jumpingFromWall);
         }
-        else if ((leftWall || rightWall) && !isGrounded && AboveGround())
+        else if ((leftWall || rightWall) && !isGrounded && AboveGround() && endWallRunTimer <= 0)
         {
             NotifyStateChange(stateController.wallRunning);
             Debug.Log("Schould be running the wall");

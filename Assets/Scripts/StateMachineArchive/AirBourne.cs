@@ -7,10 +7,17 @@ public class AirBourne : State
     private Vector3 horizontalVelocity;
     private Vector3 moveDirection;
 
+    public float rotationSpeed = 3.0f;
+    public float tiltAngle = 0f;
+
+    private Quaternion currentRotation;
+    private Quaternion targetRotation;
+
     public override void OnEnter()
     {
         base.OnEnter();
         rb.useGravity = true;
+        //rb.freezeRotation = false;
     }
     public override void OnUpdate()
     {
@@ -39,7 +46,15 @@ public class AirBourne : State
                 rb.linearVelocity = new Vector3(limitedHorizonatlVelocity.x, 0, limitedHorizonatlVelocity.z);
             }
         }
+        // Adjust rotation back to normal
+        //Vector3 tiltAxis = Vector3.Cross(rb.transform.right, rb.transform.up).normalized;
+        //targetRotation = Quaternion.AngleAxis(tiltAngle, tiltAxis);
+        //currentRotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotationSpeed);
 
     }
-    public override void OnExit() { base.OnExit();}
+    public override void OnExit()
+    {
+        base.OnExit();
+        //rb.freezeRotation = true;
+    }
 }
