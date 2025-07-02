@@ -9,7 +9,7 @@ public class JumpFromWall : State
         // Determine side of the wall
         Vector3 wallNormal = pc.rightWall ? pc.rightWallHit.normal : pc.leftWallHit.normal;
 
-        rb.AddForce(rb.transform.up * pc.jumpForce * 0.7f + wallNormal * pc.jumpForce * 0.7f, ForceMode.Force);
+        rb.AddForce(rb.transform.up * pc.jumpForce + wallNormal * pc.jumpForce, ForceMode.Force);
     }
     public override void OnExit()
     {

@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 1215035104}
   - component: {fileID: 1215035103}
   - component: {fileID: 1215035102}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -450,7 +450,7 @@ Transform:
   m_GameObject: {fileID: 1215035101}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.3230333, y: 4.69, z: -0.3}
+  m_LocalPosition: {x: -2.3230333, y: 4.1, z: -0.3}
   m_LocalScale: {x: 10, y: 4, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -721,14 +721,14 @@ MonoBehaviour:
   maxSpeed: 30
   groundSpeed: 10
   jumpForce: 300
-  jumpCooldown: 0.4
+  jumpCooldown: 0.05
   wallRunForce: 20
   wallRunSpeed: 12
   wallCheckDistance: 0.7
   minJumpHeight: 2
   maxWallRunTime: 2
   wallRunTimer: 0
-  endWallRunTime: 0.3
+  endWallRunTime: 0.1
   endWallRunTimer: 0
   playerInput: {fileID: 0}
   rb: {fileID: 0}
@@ -758,7 +758,7 @@ GameObject:
   - component: {fileID: 1454018652}
   - component: {fileID: 1454018651}
   - component: {fileID: 1454018650}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
