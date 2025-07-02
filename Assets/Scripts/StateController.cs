@@ -8,7 +8,7 @@ public class StateController : MonoBehaviour
     public PlayerController playerController;
     public Vector2 currentInput;
 
-    State currentState;
+    private State currentState;
 
     public IdleState idleState;
     public GroundRunning groundRunning;

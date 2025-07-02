@@ -59,6 +59,9 @@ public class PlayerController : MonoBehaviour
     public RaycastHit leftWallHit;
     public RaycastHit rightWallHit;
 
+    [Header("Interactions")]
+    public InteractionManager interactionManager;
+
     #endregion
     #region Booleans
     // To set a condition to check if the player is on a ground surface
@@ -230,7 +233,7 @@ public class PlayerController : MonoBehaviour
     {
         return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
     }
-    public void onMove(CallbackContext ctx)
+    public void onMove(InputAction.CallbackContext ctx)
     {
         //Reads PlayerInput
         moveInput = ctx.ReadValue<Vector2>();
@@ -238,7 +241,7 @@ public class PlayerController : MonoBehaviour
         stateController.SetMoveInput(moveInput);
     }
     // JumpFunction MOVE to JumpFromWall or JumpFromGround
-    public void onJump(CallbackContext ctx) 
+    public void onJump(InputAction.CallbackContext ctx) 
     {
         // Only Jump if it's not on cooldown and the Player is Grounded
         // Sets Jumping to true and together with the state if the player is on ground or not fires respective State
