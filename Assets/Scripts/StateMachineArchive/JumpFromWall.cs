@@ -7,7 +7,7 @@ public class JumpFromWall : State
     {
         base.OnEnter();
         // Determine side of the wall
-        Vector3 wallNormal = pc.rightWall ? pc.rightWallHit.normal : pc.leftWallHit.normal;
+        Vector3 wallNormal = sc.rightWall ? sc.rightWallHit.normal : sc.leftWallHit.normal;
 
         rb.AddForce(rb.transform.up * pc.jumpForce + wallNormal * pc.jumpForce, ForceMode.Force);
     }

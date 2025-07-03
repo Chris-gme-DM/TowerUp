@@ -11,6 +11,17 @@ public class PlayerController : MonoBehaviour
 #region Unity UI
     [Header("References")]
     public StateController stateController;
+    public InteractionManager interactionManager;
+    // Variables for Script
+    // Reference to Player Input
+    public PlayerInput playerInput;
+    // Reference to the physics of the PlayerObject
+    public Rigidbody rb;
+    // Movement Input reading
+    public Vector2 moveInput;
+    // Reference for the camera to Enable look around
+    public Transform cameraTransform;
+
     // Values to set for developer in Unity
     [Header("Movement")]
     // Accelaration Value
@@ -35,49 +46,37 @@ public class PlayerController : MonoBehaviour
     [Header("WallRun")]
     [Range(0f, 500f)] public float wallRunForce;
     [Range(0f, 50f)] public float wallRunSpeed;
-    public float wallCheckDistance;
-    public float minJumpHeight;
+    //public float wallCheckDistance;
+    //public float minJumpHeight;
     //limitations of wallrunning
     public float maxWallRunTime;
     public float wallRunTimer;
     public float endWallRunTime;
     public float endWallRunTimer;
 
-    // Variables for Script
-    // Reference to Player Input
-    public PlayerInput playerInput;
-    // Reference to the physics of the PlayerObject
-    public Rigidbody rb;
-    // Movement Input reading
-    public Vector2 moveInput;
-    // Reference for the camera to Enable look around
-    public Transform cameraTransform;
 
-    [Header("CollisionChecks")]
-    public LayerMask whatIsGround;
-    public LayerMask whatIsWall;
-    public RaycastHit leftWallHit;
-    public RaycastHit rightWallHit;
-
-    [Header("Interactions")]
-    public InteractionManager interactionManager;
+    //[Header("CollisionChecks")]
+    //public LayerMask whatIsGround;
+    //public LayerMask whatIsWall;
+    //public RaycastHit leftWallHit;
+    //public RaycastHit rightWallHit;
 
     #endregion
     #region Booleans
     // To set a condition to check if the player is on a ground surface
-    public bool isGrounded;
+    //public bool isGrounded;
     // Will check if Jump is pressed and based on condition if player is on ground or not give the respective StateChange
     public bool jumpPressed;
     // To set a kind of a cooldown for Jumps
     public bool canJump;
     // to check which side the wall is on
-    public bool leftWall;
-    public bool rightWall;
+    //public bool leftWall;
+    //public bool rightWall;
 
     // Set if character pressed slide
     //IF time > 0   public bool slidePressed;
     // PlayerHeight to Check Raycast Hit on Ground
-    public float playerHeight;
+    //public float playerHeight;
     #endregion
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -87,11 +86,12 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
         // Get Player Height
-        playerHeight = GetComponent<CapsuleCollider>().height;
+        //playerHeight = GetComponent<CapsuleCollider>().height;
         // Subscribe to InputActions
         playerInput.actions["Move"].performed += onMove;
         playerInput.actions["Move"].canceled += onMove;
         playerInput.actions["Jump"].performed += onJump;
+        playerInput.actions["Interact"].performed += onInteractPerformed;
 
         //Define Camera transformation, in this case the camera is locked to the player
         cameraTransform = Camera.main.transform;
@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         // Checks conditions and notifies the StateController about any changes
-        CheckState();
+        //CheckState();
 
         // Count EndWallRunTimer
         if(endWallRunTimer > 0)
@@ -175,64 +175,60 @@ public class PlayerController : MonoBehaviour
     //}
     #endregion
     // Notifies the StateMachine upon any StateCheck
-    public void NotifyStateChange(State newState)
-    {
-        stateController.ChangeState(newState);
-    }
 #region Checks
     // Check things
     // Constantly Checks the conditions the playr is in to notify StateChanges to StateController
-    private void CheckState()
-    {
-        GroundCheck();
-        AboveGround();
-        Debug.Log(AboveGround());
-        WallCheck();
+    //private void CheckState()
+    //{
+    //    GroundCheck();
+    //    AboveGround();
+    //    Debug.Log(AboveGround());
+    //    WallCheck();
 
-        if ((leftWall || rightWall) && jumpPressed && AboveGround())
-        {
-            NotifyStateChange(stateController.jumpingFromWall);
-        }
-        else if ((leftWall || rightWall) && !isGrounded && AboveGround() && endWallRunTimer <= 0)
-        {
-            NotifyStateChange(stateController.wallRunning);
-            Debug.Log("Schould be running the wall");
-        }
-        else if (jumpPressed && isGrounded)
-        {
-            NotifyStateChange(stateController.jumpingFromGround);
-        }
-        else if (isGrounded && moveInput != Vector2.zero)
-        {
-            NotifyStateChange(stateController.groundRunning);
-        }
-        else if (isGrounded && moveInput == Vector2.zero)
-        {
-            NotifyStateChange(stateController.idleState);
-        }
-        else
-        {
-            NotifyStateChange(stateController.airBourne);
-        }
+    //    if ((leftWall || rightWall) && jumpPressed && AboveGround())
+    //    {
+    //        NotifyStateChange(stateController.jumpingFromWall);
+    //    }
+    //    else if ((leftWall || rightWall) && !isGrounded && AboveGround() && endWallRunTimer <= 0)
+    //    {
+    //        NotifyStateChange(stateController.wallRunning);
+    //        Debug.Log("Schould be running the wall");
+    //    }
+    //    else if (jumpPressed && isGrounded)
+    //    {
+    //        NotifyStateChange(stateController.jumpingFromGround);
+    //    }
+    //    else if (isGrounded && moveInput != Vector2.zero)
+    //    {
+    //        NotifyStateChange(stateController.groundRunning);
+    //    }
+    //    else if (isGrounded && moveInput == Vector2.zero)
+    //    {
+    //        NotifyStateChange(stateController.idleState);
+    //    }
+    //    else
+    //    {
+    //        NotifyStateChange(stateController.airBourne);
+    //    }
 
-    }
-    private bool GroundCheck()
-    {
-        Ray ray = new(transform.position, Vector3.down);
-        return isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, whatIsGround);
-    }
-    private void WallCheck()
-    {
-        Ray ray = new(cameraTransform.transform.position, Vector3.forward);
-        leftWall = Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
-        rightWall = Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
-        Debug.Log(leftWall);
-        Debug.Log(rightWall);
-    }
-    private bool AboveGround()
-    {
-        return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
-    }
+    //}
+    //private bool GroundCheck()
+    //{
+    //    Ray ray = new(transform.position, Vector3.down);
+    //    return isGrounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, whatIsGround);
+    //}
+    //private void WallCheck()
+    //{
+    //    Ray ray = new(cameraTransform.transform.position, Vector3.forward);
+    //    leftWall = Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
+    //    rightWall = Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
+    //    Debug.Log(leftWall);
+    //    Debug.Log(rightWall);
+    //}
+    //private bool AboveGround()
+    //{
+    //    return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
+    //}
     public void onMove(InputAction.CallbackContext ctx)
     {
         //Reads PlayerInput
@@ -260,8 +256,13 @@ public class PlayerController : MonoBehaviour
         canJump = true;
         jumpPressed = false;
     }
+    public void onInteractPerformed(InputAction.CallbackContext ctx)
+    {
+        interactionManager.TriggerInteract();
+    }
+
     #endregion
-// Since GroundCheck() should make CollisionChecks obsolete
+    // Since GroundCheck() should make CollisionChecks obsolete
     //private void OnCollisionStay(Collision collision)
     //{
     //    if(collision.gameObject.layer == LayerMask.NameToLayer("Ground"))

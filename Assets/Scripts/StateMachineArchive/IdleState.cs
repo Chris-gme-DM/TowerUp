@@ -6,7 +6,6 @@ public class IdleState : State
     public override void OnEnter()
     {
         base.OnEnter();
-        Debug.Log("Entered Idle State");
         // Set animation
         // Reset values of ground based Movements?
         

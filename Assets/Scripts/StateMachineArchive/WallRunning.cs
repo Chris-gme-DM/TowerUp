@@ -33,7 +33,7 @@ public class WallRunning : State
         // horizontal velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0 , rb.linearVelocity.z);
 
-        Vector3 wallNormal = pc.rightWall ? pc.rightWallHit.normal : pc.leftWallHit.normal;
+        Vector3 wallNormal = sc.rightWall ? sc.rightWallHit.normal : sc.leftWallHit.normal;
 
         Vector3 wallForward = Vector3.Cross(wallNormal, rb.transform.up);
 
@@ -49,7 +49,7 @@ public class WallRunning : State
         //currentRotation = Quaternion.Slerp(currentRotation, targetRotation, Time.deltaTime * rotationSpeed);
 
         // Pin the player to wall
-        if (!(pc.leftWall && moveInput.sqrMagnitude > 0) && !(pc.rightWall && moveInput.sqrMagnitude > 0))
+        if (!(sc.leftWall && moveInput.sqrMagnitude > 0) && !(sc.rightWall && moveInput.sqrMagnitude > 0))
             rb.AddForce(-wallNormal*10, ForceMode.Force);
         // Force the player from the wall as soon as the timer runs out
         if(pc.wallRunTimer <= 0) 
