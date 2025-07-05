@@ -85,6 +85,12 @@ public class PlayerController : MonoBehaviour
         //Get Rigidbody and PlayerInput for access
         playerInput = GetComponent<PlayerInput>();
         rb = GetComponent<Rigidbody>();
+        // Automatically find StateController and InteractionManager i took a liking to let it find things on its own
+        // Safety checks in case i didn't assign any for the moment this should make things easy
+        if(stateController == null)
+            stateController = FindAnyObjectByType<StateController>();
+        if(interactionManager == null)
+            interactionManager = FindAnyObjectByType<InteractionManager>();
         // Get Player Height
         //playerHeight = GetComponent<CapsuleCollider>().height;
         // Subscribe to InputActions
@@ -92,7 +98,6 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Move"].canceled += onMove;
         playerInput.actions["Jump"].performed += onJump;
         playerInput.actions["Interact"].performed += onInteractPerformed;
-
         //Define Camera transformation, in this case the camera is locked to the player
         cameraTransform = Camera.main.transform;
         // Set Jumpability

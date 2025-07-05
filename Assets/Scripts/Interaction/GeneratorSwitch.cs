@@ -1,32 +1,36 @@
+using System.Collections.Specialized;
 using UnityEngine;
 
-public class GeneratorSwitch : InteractableData, IInteractable
+public class GeneratorSwitch : InteractableBase
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    //void Start()
-    //{
-        
-    //}
+    [Header("References")]
+    // Reference to the door it controls the Powersurge to, until better system needs to be referenced manually
+    public Door ThisDoor;
+    private Animator animator;
+    private bool switchON;
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-        
-    //}
-    //public override void Interact()
-    //{
-    //    base.Interact();
-    //    // Do the stuff
-    //    // Play Animation if any
-    //}
-    //public override void OnFocus()
-    //{
-    //    base.OnFocus();
-    //    // Subscribe to Interaction
-    //}
-    //public override void OnLoseFocus()
-    //{
-    //    base.OnLoseFocus();
-    //    // Unsubscribe from Interaction
-    //}
+    //Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        //Get own components online
+        switchON = false; 
+        animator = GetComponent<Animator>();
+    }
+    public override void Interact()
+    {
+        // Do the stuff
+        ThisDoor.OnPowerSwitchInteract();
+        switchON = !switchON;
+        // Play Animation if any
+    }
+    public override void onSubscribe()
+    {
+        base.onSubscribe();
+        // Subscribe to Interaction
+    }
+    public override void onUnsubscribe()
+    {
+        base.onUnsubscribe();
+        // Unsubscribe from Interaction
+    }
 }

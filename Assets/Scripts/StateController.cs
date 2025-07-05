@@ -14,6 +14,7 @@ public class StateController : MonoBehaviour
     [Header("CollisionChecks")]
     public LayerMask whatIsGround;
     public LayerMask whatIsWall;
+
     public RaycastHit leftWallHit;
     public RaycastHit rightWallHit;
     // PlayerHeight to Check Raycast Hit on Ground
@@ -34,10 +35,18 @@ public class StateController : MonoBehaviour
     public JumpFromWall jumpingFromWall;
     public ClimbWall climbWall;
     public AirBourne airBourne;
+
+    // Consider Interaction state to pin player in place but i think it's unnecessary for now
+    // Maybe if i create Interactable Obstacles for more parcour it will need to lock the player out for the animation to play out
+    // depending on the Interactable
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        pc = FindAnyObjectByType<PlayerController>();
+        // saftey check
+        if(pc == null)
+            //Finds the playercontroller and thus the player automatically
+            pc = FindAnyObjectByType<PlayerController>();
         rb = pc.rb;
         cameraTransform = pc.cameraTransform;
         //Instantiate the States to ensure they are ready throughout the LifeCycle
