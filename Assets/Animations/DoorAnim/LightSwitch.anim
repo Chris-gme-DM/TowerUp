@@ -23,37 +23,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.016666668
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_IsActive
-    path: TowerUp_Door_Light
-    classID: 1
-    script: {fileID: 0}
-    flags: 16
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.014610589
+        value: 5.000001
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -83,7 +53,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 5
+        value: 0.050784387
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -173,7 +143,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.01461059
+        value: 5.000001
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -182,7 +152,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 5.0000005
+        value: 0.41118515
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -203,7 +173,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 5
+        value: 0.050784387
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -212,7 +182,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.05078441
+        value: 5.0000024
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -293,7 +263,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -302,7 +272,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.90588236
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -323,7 +293,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.90588236
+        value: 0.09836715
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -332,7 +302,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0
+        value: 0.90588236
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -353,7 +323,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.07144826
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -362,7 +332,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.0054746405
+        value: 0.07144826
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -417,10 +387,19 @@ AnimationClip:
     genericBindings:
     - serializedVersion: 2
       path: 971120390
-      attribute: 2086281974
+      attribute: 144923010
       script: {fileID: 0}
-      typeID: 1
-      customType: 0
+      typeID: 23
+      customType: 22
+      isPPtrCurve: 0
+      isIntCurve: 0
+      isSerializeReferenceCurve: 0
+    - serializedVersion: 2
+      path: 971120390
+      attribute: 413358466
+      script: {fileID: 0}
+      typeID: 23
+      customType: 22
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
@@ -463,24 +442,6 @@ AnimationClip:
     - serializedVersion: 2
       path: 971120390
       attribute: 1673329336
-      script: {fileID: 0}
-      typeID: 23
-      customType: 22
-      isPPtrCurve: 0
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 971120390
-      attribute: 144923010
-      script: {fileID: 0}
-      typeID: 23
-      customType: 22
-      isPPtrCurve: 0
-      isIntCurve: 0
-      isSerializeReferenceCurve: 0
-    - serializedVersion: 2
-      path: 971120390
-      attribute: 413358466
       script: {fileID: 0}
       typeID: 23
       customType: 22
@@ -560,37 +521,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.016666668
-        value: 1
-        inSlope: Infinity
-        outSlope: Infinity
-        tangentMode: 103
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    attribute: m_IsActive
-    path: TowerUp_Door_Light
-    classID: 1
-    script: {fileID: 0}
-    flags: 16
-  - serializedVersion: 2
-    curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.014610589
+        value: 5.000001
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -620,7 +551,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 5
+        value: 0.050784387
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -710,7 +641,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.01461059
+        value: 5.000001
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -719,7 +650,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 5.0000005
+        value: 0.41118515
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -740,7 +671,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 5
+        value: 0.050784387
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -749,7 +680,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.05078441
+        value: 5.0000024
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -830,7 +761,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
+        value: 1
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -839,7 +770,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.90588236
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -860,7 +791,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.90588236
+        value: 0.09836715
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -869,7 +800,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0
+        value: 0.90588236
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -890,7 +821,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.07144826
+        value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -899,7 +830,7 @@ AnimationClip:
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.016666668
-        value: 0.0054746405
+        value: 0.07144826
         inSlope: 0
         outSlope: 0
         tangentMode: 136

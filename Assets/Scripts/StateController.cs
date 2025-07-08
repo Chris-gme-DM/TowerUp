@@ -14,18 +14,42 @@ public class StateController : MonoBehaviour
     [Header("CollisionChecks")]
     public LayerMask whatIsGround;
     public LayerMask whatIsWall;
+    public LayerMask whatIsScalable;
 
     public RaycastHit leftWallHit;
     public RaycastHit rightWallHit;
+    public RaycastHit frontWallHit;
     // PlayerHeight to Check Raycast Hit on Ground
     public float playerHeight;
-    // to check which side the wall is on
-    public bool leftWall;
-    public bool rightWall;
+    // to check which side the wall is closest to determine if wallrun or climb should be enabled
+    public bool leftWallrunEnabled;
+    public bool rightWallrunEnabled;
+    public bool frontWallClimbEnabled;
+    // to check if a wall is even hit
+    public bool leftWallDetected;
+    public bool rightWallDetected;
+    public bool frontWallDetected;
+    // Angle thresholds for wall types // AI that wasn't a bad solution after all, tired
+    [Header("Wall Type Detection")]
+    [Range(0, 180)] public float minWallRunAngle; // Angle between player forward and wall normal
+    [Range(0, 180)] public float maxWallRunAngle; // Perfect wall run is 90 degrees
+    [Range(0, 180)] public float minClimbAngle;    // Angle between player forward and wall normal 
+    [Range(0, 180)] public float maxClimbAngle;   // Perfect climb is 0 degrees (straight wall), // if you rotate 180 degress (its 180 deg)
+
     public float wallCheckDistance;
     public float minJumpHeight;
     public bool isGrounded;
 
+    [Header("Cooldowns")]
+    // common Timer needed to not make climb and wallrun combo abusable
+    [Range(0, 5f)] public float wallRunClimbCooldown;
+    private float wallRunClimbCooldownTimer;
+    public bool IsOnWallCooldown;
+    [Range(0, 5f)] public float maxWallRunTime;
+    public float wallRunTimer;
+
+
+    // States
     private State currentState;
 
     public IdleState idleState;
@@ -65,44 +89,65 @@ public class StateController : MonoBehaviour
     {
         CheckState();
         currentState?.OnStateUpdate();
+        WallRunClimbCooldown();
     }
     public void FixedUpdate()
     {
         currentState?.OnStateFixedUpdate();
     }
+    #region Statechecks
     private void CheckState()
     {
         GroundCheck();
         AboveGround();
         WallCheck();
 
-        if ((leftWall || rightWall) && pc.jumpPressed && AboveGround())
+        // Just to force the player from the wall if they stick to it too long for my taste, i will add a froce that pushes them off the wall
+        // so this is another redundancy in my eyes
+        //if((currentState == wallRunning || currentState == climbWall) && wallRunTimer <= 0)
+        //{
+        //    ChangeState(airBourne);
+        //    return;
+        //}
+        // JumpFromWall
+        if ((leftWallrunEnabled || rightWallrunEnabled || frontWallClimbEnabled) && pc.jumpPressed && AboveGround())
         {
             ChangeState(jumpingFromWall);
         }
-        else if ((leftWall || rightWall) && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0)
+        // Wallrunning
+        else if ((leftWallrunEnabled || rightWallrunEnabled) && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)// maybe i should move more things from playerController in here
         {
             ChangeState(wallRunning);
-            Debug.Log("Schould be running the wall");
         }
+        // Climbing, i think i can use this in other Interactables or better Scalable objects, as soon as i create them
+        else if (frontWallClimbEnabled && pc.climbPressed && !leftWallrunEnabled && !rightWallrunEnabled && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)
+        {
+            ChangeState(climbWall);
+        }
+        // JumpFromGround
         else if (pc.jumpPressed && isGrounded)
         {
             ChangeState(jumpingFromGround);
         }
+        // Running, walking seemed redundant and useless, unless stamina becomes a thing...
         else if (isGrounded && currentInput != Vector2.zero)
         {
             ChangeState(groundRunning);
         }
+        // Idle
         else if (isGrounded && currentInput == Vector2.zero)
         {
             ChangeState(idleState);
         }
+        // Fallback if everything else doesn't apply, hope the player will hit some ground at some point, or traps, or lava, who knows, i need traps
         else
         {
             ChangeState(airBourne);
         }
 
     }
+    #endregion
+    #region Checks for Statecheck
     private bool GroundCheck()
     {
         Ray ray = new(rb.transform.position, Vector3.down);
@@ -110,24 +155,104 @@ public class StateController : MonoBehaviour
     }
     private void WallCheck()
     {
+        // Reset values for new checks
+        leftWallrunEnabled = false;
+        rightWallrunEnabled = false;
+        frontWallClimbEnabled = false;
+        leftWallDetected = false;
+        rightWallDetected = false;
+        frontWallDetected = false;
+
         Ray ray = new(cameraTransform.transform.position, Vector3.forward);
-        leftWall = Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall);
-        rightWall = Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall);
-        Debug.Log(leftWall);
-        Debug.Log(rightWall);
+        // LeftWallCheck
+        if (Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall))
+        {
+            leftWallDetected = true;
+            float angle = Vector3.Angle(cameraTransform.forward, leftWallHit.normal);
+            if (angle >= minWallRunAngle && angle <= maxWallRunAngle)
+                leftWallrunEnabled = true;
+        }
+        // RighWallCheck
+        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall))
+        {
+            rightWallDetected = true;
+            float angle = Vector3.Angle(cameraTransform.forward, rightWallHit.normal);
+            if(angle >= minWallRunAngle && angle <= maxWallRunAngle)
+                rightWallrunEnabled = true;
+        }
+        // FrontWallCheck
+        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.forward, out frontWallHit, wallCheckDistance, whatIsWall))
+        {
+            frontWallDetected = true;
+            float angle = Vector3.Angle(cameraTransform.forward, frontWallHit.normal);
+            Debug.Log(angle);
+            if(angle >= minClimbAngle && angle <= maxClimbAngle)
+                frontWallClimbEnabled = true;
+        }
     }
     private bool AboveGround()
     {
         return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
     }
-
+    public void WallRunClimbCooldown()
+    {
+        if (IsOnWallCooldown)
+        {
+            wallRunClimbCooldownTimer -= Time.deltaTime;
+            if( wallRunClimbCooldownTimer <= 0 )
+            {
+                IsOnWallCooldown = false;
+            }
+        }
+    }
+    public void ResetWallInteractionTimer()
+    { 
+        // Reset only when i tell you
+        wallRunTimer = maxWallRunTime;
+    }
+    public void DecrementWallInteractionTimer(float deltaTime)
+    {
+        // Count the timer down, if this hits 0 i will tell the Climbwall and wallrun script to push someone off
+        if( wallRunTimer > 0 )
+        { wallRunTimer -= deltaTime; }
+    }
+#endregion
     public void ChangeState(State newState)
     {
         if(newState == currentState) return;
+
+        // Cooldown Logic...
+        // Somehow recognize if the current state was wall related, run or climb
+        bool wasInWallContact = (currentState == wallRunning || currentState == climbWall);
+        // recognize if the new state is wall related, run or climb
+        // or rather not, since that can initate the timer to reset
+        bool willNotBeInWallContact = (newState != wallRunning && newState != climbWall);
+        // if so, do NOT touch the timer that should force the player from the wall at some point, to not exploit the features
+        // and do reset the timer only after they left the wall really
+        // ... ohoh, climb adds froce to up. increase the force that pushes the player from the wall
+        // Reset cooldown if player leaves the wall somehow
+        if(wasInWallContact && willNotBeInWallContact)
+        {
+            wallRunClimbCooldownTimer = wallRunClimbCooldown;
+            IsOnWallCooldown=true;
+        }
+        else if(newState == jumpingFromWall)
+        {
+            wallRunClimbCooldownTimer = wallRunClimbCooldown;
+            IsOnWallCooldown = true;
+        }
+        // Universal Timer Logic for wallrun AND climb
+        // Reset Timer for running/or climbing the wall only if it entered from a non wall related state
+        bool entersWallLegit = (newState == wallRunning || newState == climbWall) // ok sorry this is getting ridicolous
+            && !(currentState == wallRunning || currentState == climbWall || currentState == jumpingFromWall);
+        // Only if this bloat is the case you may reset the timer
+        if (entersWallLegit )
+        {
+            ResetWallInteractionTimer();
+        }
         currentState?.OnStateExit();
         currentState = newState;
         currentState.OnStateEnter(this, pc);
-        Debug.Log(newState);
     }
     public void SetMoveInput(Vector2 moveInput)
     {

@@ -37,6 +37,5 @@ public abstract class State
     }
     public void OnStateExit() { OnExit(); }
     public virtual void OnExit()
-    {
-    }
+    {   }
 }

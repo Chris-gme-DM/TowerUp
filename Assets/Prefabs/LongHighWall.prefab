@@ -358,6 +358,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2265366135974472621}
     m_Modifications:
+    - target: {fileID: 3632463148899753361, guid: edfe6f8693faa6b438d7d1d8c04d3c4f, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fb4a461b91d4e5d4bbf33354fa17451e, type: 2}
     - target: {fileID: 6771594936919558117, guid: edfe6f8693faa6b438d7d1d8c04d3c4f, type: 3}
       propertyPath: m_Name
       value: LongWall
