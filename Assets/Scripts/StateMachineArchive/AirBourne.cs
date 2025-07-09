@@ -38,7 +38,7 @@ public class AirBourne : State
         {
             if (moveDirection.magnitude > 0.01f)
             {
-                rb.AddForce(moveDirection * pc.accelaration*0.15f, ForceMode.Force);
+                rb.AddForce(moveDirection * pc.accelaration*0.1f, ForceMode.Force);
             }
             if (horizontalVelocity.magnitude > pc.groundSpeed)
             {

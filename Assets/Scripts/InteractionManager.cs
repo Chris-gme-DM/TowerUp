@@ -8,7 +8,7 @@ public class InteractionManager : MonoBehaviour
     // The StateController works together with the InteractionManager to find Interactables
     public PlayerController pc;
     // I switched to a HashSet to un-/register Interactable Objects dynamically for performance and scalability
-    private InteractableBase currentInteractable;
+    public InteractableBase currentInteractable {  get; private set; }
     public GameObject interactionUI;
 
     [Header("Checks")]

@@ -12,11 +12,11 @@ TagManager:
   - 
   - Water
   - UI
-  - whatIsGround
-  - whatIsWall
-  - whatIsObstacle
-  - whatIsInteractable
-  - 
+  - Ground
+  - Wall
+  - Obstacle
+  - Interactable
+  - Scalable
   - 
   - 
   - 

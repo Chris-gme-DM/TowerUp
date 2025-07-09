@@ -12,13 +12,18 @@ public class StateController : MonoBehaviour
     public Transform cameraTransform;
 
     [Header("CollisionChecks")]
-    public LayerMask whatIsGround;
-    public LayerMask whatIsWall;
-    public LayerMask whatIsScalable;
+    public LayerMask Ground;
+    public LayerMask Wall;
+    public LayerMask Scalable;
+
+    public LayerMask combinedRunnableMasks;
 
     public RaycastHit leftWallHit;
     public RaycastHit rightWallHit;
     public RaycastHit frontWallHit;
+
+    // Circumstances made a spherecast check for GroundCheck neccessary
+    public float groundSphereRadius;
     // PlayerHeight to Check Raycast Hit on Ground
     public float playerHeight;
     // to check which side the wall is closest to determine if wallrun or climb should be enabled
@@ -82,6 +87,7 @@ public class StateController : MonoBehaviour
         climbWall = new ClimbWall();
         airBourne = new AirBourne();
 
+        combinedRunnableMasks = Ground | Wall | Scalable;
         ChangeState(idleState);
     }
     // Update is called once per frame
@@ -115,7 +121,7 @@ public class StateController : MonoBehaviour
             ChangeState(jumpingFromWall);
         }
         // Wallrunning
-        else if ((leftWallrunEnabled || rightWallrunEnabled) && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)// maybe i should move more things from playerController in here
+        else if ((leftWallrunEnabled || rightWallrunEnabled) && pc.climbPressed && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)// maybe i should move more things from playerController in here
         {
             ChangeState(wallRunning);
         }
@@ -148,10 +154,16 @@ public class StateController : MonoBehaviour
     }
     #endregion
     #region Checks for Statecheck
+    public LayerMask CombinedLayerMasks()
+    {
+        return combinedRunnableMasks;
+    }
     private bool GroundCheck()
     {
-        Ray ray = new(rb.transform.position, Vector3.down);
-        return isGrounded = Physics.Raycast(rb.transform.position, Vector3.down, playerHeight * 0.5f, whatIsGround);
+        Vector3 sphereOrigin = rb.transform.position + Vector3.up * groundSphereRadius;
+        RaycastHit hit ;
+        isGrounded = Physics.SphereCast(sphereOrigin, groundSphereRadius, Vector3.down, out hit, playerHeight * 0.6f, combinedRunnableMasks); 
+        return isGrounded ;
     }
     private void WallCheck()
     {
@@ -165,7 +177,7 @@ public class StateController : MonoBehaviour
 
         Ray ray = new(cameraTransform.transform.position, Vector3.forward);
         // LeftWallCheck
-        if (Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, whatIsWall))
+        if (Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, Wall))
         {
             leftWallDetected = true;
             float angle = Vector3.Angle(cameraTransform.forward, leftWallHit.normal);
@@ -173,7 +185,7 @@ public class StateController : MonoBehaviour
                 leftWallrunEnabled = true;
         }
         // RighWallCheck
-        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, whatIsWall))
+        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, Wall))
         {
             rightWallDetected = true;
             float angle = Vector3.Angle(cameraTransform.forward, rightWallHit.normal);
@@ -181,18 +193,17 @@ public class StateController : MonoBehaviour
                 rightWallrunEnabled = true;
         }
         // FrontWallCheck
-        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.forward, out frontWallHit, wallCheckDistance, whatIsWall))
+        if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.forward, out frontWallHit, wallCheckDistance, Wall))
         {
             frontWallDetected = true;
             float angle = Vector3.Angle(cameraTransform.forward, frontWallHit.normal);
-            Debug.Log(angle);
             if(angle >= minClimbAngle && angle <= maxClimbAngle)
                 frontWallClimbEnabled = true;
         }
     }
     private bool AboveGround()
     {
-        return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, whatIsGround);
+        return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, Ground);
     }
     public void WallRunClimbCooldown()
     {

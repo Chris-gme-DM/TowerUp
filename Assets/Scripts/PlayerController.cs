@@ -140,6 +140,7 @@ public class PlayerController : MonoBehaviour
     }
     public void onInteractPerformed(InputAction.CallbackContext ctx)
     {
+        if(interactionManager.currentInteractable )
         interactionManager.TriggerInteract();
     }
     public void onClimb(InputAction.CallbackContext ctx)
