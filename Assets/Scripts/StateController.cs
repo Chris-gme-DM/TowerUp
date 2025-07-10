@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.XR;
 // I just want to keep my States clean
+// Needs Update to hinder player from abusing wall climb
+// AI additions are obvious i guess, otherwise the stamina system was worked out with Gemini due to time restraints
 public class StateController : MonoBehaviour
 {
     [Header("Reference")]
@@ -10,6 +12,15 @@ public class StateController : MonoBehaviour
     public Vector2 currentInput;
     public Rigidbody rb;
     public Transform cameraTransform;
+
+    // The whole wallrun and climb abuse is now more intuitively solved by a stamina system. timers are just too easy to trick or too obscure to deal with
+    // the stamina system doesn't even need to be visible to the player
+
+    [Header("Stamina System")]
+    [Range(0, 200)] public float maxStamina = 100f; // Max stamina capacity
+    public float currentStamina; // Current stamina
+    [Range(0, 20)] public float staminaRegenRate = 10f; // Stamina regenerated per second
+    [Range(0, 100)] public float wallInteractionStaminaCost = 20f; // Stamina consumed per second while on wall
 
     [Header("CollisionChecks")]
     public LayerMask Ground;
@@ -34,6 +45,8 @@ public class StateController : MonoBehaviour
     public bool leftWallDetected;
     public bool rightWallDetected;
     public bool frontWallDetected;
+    // Helper property to interrupt infinite Wallrunning
+    public bool anyWallDetected => leftWallDetected || rightWallDetected || frontWallDetected;
     // Angle thresholds for wall types // AI that wasn't a bad solution after all, tired
     [Header("Wall Type Detection")]
     [Range(0, 180)] public float minWallRunAngle; // Angle between player forward and wall normal
@@ -50,9 +63,6 @@ public class StateController : MonoBehaviour
     [Range(0, 5f)] public float wallRunClimbCooldown;
     private float wallRunClimbCooldownTimer;
     public bool IsOnWallCooldown;
-    [Range(0, 5f)] public float maxWallRunTime;
-    public float wallRunTimer;
-
 
     // States
     private State currentState;
@@ -87,15 +97,38 @@ public class StateController : MonoBehaviour
         climbWall = new ClimbWall();
         airBourne = new AirBourne();
 
-        combinedRunnableMasks = Ground | Wall | Scalable;
+        currentStamina = maxStamina; // Initialize stamina
+        combinedRunnableMasks = Ground | Scalable;
         ChangeState(idleState);
     }
     // Update is called once per frame
     void Update()
     {
+        // Stamina Consumption for Wall Running/Climbing
+        if (currentState == wallRunning || currentState == climbWall)
+        {
+            currentStamina -= wallInteractionStaminaCost * Time.deltaTime;
+            currentStamina = Mathf.Max(0, currentStamina); // Ensure stamina doesn't go below 0
+            // Removed: Decrement the specific wall run/climb duration timer as a secondary limit
+        }
+        // Stamina Regeneration for other states (Idle, GroundRunning, AirBourne)
+        else if (currentState == idleState || currentState == groundRunning || currentState == airBourne)
+        {
+            currentStamina += staminaRegenRate * Time.deltaTime;
+            currentStamina = Mathf.Min(maxStamina, currentStamina); // Ensure stamina doesn't exceed maxStamina
+        }
+
         CheckState();
         currentState?.OnStateUpdate();
         WallRunClimbCooldown();
+
+        // Force player off wall if stamina runs out
+        if ((currentState == wallRunning || currentState == climbWall) && currentStamina <= 0 && !IsOnWallCooldown)
+        {
+            Debug.Log($"StateController: Wall interaction limit reached (Stamina: {currentStamina:F2}). Forcing JumpFromWall state.");
+            ChangeState(jumpingFromWall); // Changed from airBourne to jumpingFromWall
+            return; // Important: return after changing state to prevent immediate re-evaluation in CheckState this frame.
+        }
     }
     public void FixedUpdate()
     {
@@ -108,6 +141,9 @@ public class StateController : MonoBehaviour
         AboveGround();
         WallCheck();
 
+        // New condition: Player must have stamina to enter wall-related states
+        bool hasStaminaForWallInteraction = currentStamina > 0;
+
         // Just to force the player from the wall if they stick to it too long for my taste, i will add a froce that pushes them off the wall
         // so this is another redundancy in my eyes
         //if((currentState == wallRunning || currentState == climbWall) && wallRunTimer <= 0)
@@ -116,17 +152,17 @@ public class StateController : MonoBehaviour
         //    return;
         //}
         // JumpFromWall
-        if ((leftWallrunEnabled || rightWallrunEnabled || frontWallClimbEnabled) && pc.jumpPressed && AboveGround())
+        if ((leftWallrunEnabled || rightWallrunEnabled || frontWallClimbEnabled) && pc.jumpPressed && AboveGround() )
         {
             ChangeState(jumpingFromWall);
         }
         // Wallrunning
-        else if ((leftWallrunEnabled || rightWallrunEnabled) && pc.climbPressed && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)// maybe i should move more things from playerController in here
+        else if ((leftWallrunEnabled || rightWallrunEnabled) && pc.climbPressed && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown && hasStaminaForWallInteraction)// maybe i should move more things from playerController in here
         {
             ChangeState(wallRunning);
         }
         // Climbing, i think i can use this in other Interactables or better Scalable objects, as soon as i create them
-        else if (frontWallClimbEnabled && pc.climbPressed && !leftWallrunEnabled && !rightWallrunEnabled && pc.endWallRunTimer <= 0 && !IsOnWallCooldown)
+        else if (frontWallClimbEnabled && pc.climbPressed && !leftWallrunEnabled && !rightWallrunEnabled && pc.endWallRunTimer <= 0 && !IsOnWallCooldown && hasStaminaForWallInteraction)
         {
             ChangeState(climbWall);
         }
@@ -175,7 +211,6 @@ public class StateController : MonoBehaviour
         rightWallDetected = false;
         frontWallDetected = false;
 
-        Ray ray = new(cameraTransform.transform.position, Vector3.forward);
         // LeftWallCheck
         if (Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, Wall))
         {
@@ -216,52 +251,24 @@ public class StateController : MonoBehaviour
             }
         }
     }
-    public void ResetWallInteractionTimer()
-    { 
-        // Reset only when i tell you
-        wallRunTimer = maxWallRunTime;
-    }
-    public void DecrementWallInteractionTimer(float deltaTime)
-    {
-        // Count the timer down, if this hits 0 i will tell the Climbwall and wallrun script to push someone off
-        if( wallRunTimer > 0 )
-        { wallRunTimer -= deltaTime; }
-    }
 #endregion
     public void ChangeState(State newState)
     {
         if(newState == currentState) return;
 
-        // Cooldown Logic...
-        // Somehow recognize if the current state was wall related, run or climb
-        bool wasInWallContact = (currentState == wallRunning || currentState == climbWall);
-        // recognize if the new state is wall related, run or climb
-        // or rather not, since that can initate the timer to reset
-        bool willNotBeInWallContact = (newState != wallRunning && newState != climbWall);
-        // if so, do NOT touch the timer that should force the player from the wall at some point, to not exploit the features
-        // and do reset the timer only after they left the wall really
-        // ... ohoh, climb adds froce to up. increase the force that pushes the player from the wall
-        // Reset cooldown if player leaves the wall somehow
-        if(wasInWallContact && willNotBeInWallContact)
-        {
-            wallRunClimbCooldownTimer = wallRunClimbCooldown;
-            IsOnWallCooldown=true;
-        }
-        else if(newState == jumpingFromWall)
+        State previousState = currentState;
+        bool wasInWallState = (previousState == wallRunning || previousState == climbWall);
+        bool entersWallState = (newState == wallRunning || newState == climbWall);
+        bool entersJumpFromWall = (newState == jumpingFromWall);
+
+        if ((wasInWallState || (previousState == jumpingFromWall)) && (!entersWallState && !anyWallDetected) || entersJumpFromWall)
         {
             wallRunClimbCooldownTimer = wallRunClimbCooldown;
             IsOnWallCooldown = true;
+            Debug.Log("StateController: Activated Wall Cooldown due to leaving wall or jumping.");
         }
-        // Universal Timer Logic for wallrun AND climb
-        // Reset Timer for running/or climbing the wall only if it entered from a non wall related state
-        bool entersWallLegit = (newState == wallRunning || newState == climbWall) // ok sorry this is getting ridicolous
-            && !(currentState == wallRunning || currentState == climbWall || currentState == jumpingFromWall);
-        // Only if this bloat is the case you may reset the timer
-        if (entersWallLegit )
-        {
-            ResetWallInteractionTimer();
-        }
-        currentState?.OnStateExit();
+
+        previousState?.OnStateExit();
         currentState = newState;
         currentState.OnStateEnter(this, pc);
     }

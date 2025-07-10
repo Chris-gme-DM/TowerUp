@@ -13,8 +13,6 @@ public class ClimbWall : State
     public override void OnUpdate()
     {
         base.OnUpdate();
-        // aformentioned responsible script
-        sc.DecrementWallInteractionTimer(Time.deltaTime);
     }
 
     public override void OnFixedUpdate()
@@ -26,12 +24,6 @@ public class ClimbWall : State
         Vector3 wallNormal = sc.frontWallHit.normal;
         // Climp Up
         rb.AddForce(rb.transform.up * pc.wallClimbForce, ForceMode.Force);
-        // Force the player from the wall as soon as the timer runs out
-        if (sc.wallRunTimer <= 0)
-        {
-            pc.climbPressed = false;
-            rb.AddForce(wallNormal * pc.wallDisengageForce, ForceMode.Impulse);
-        }
 
     }
     public override void OnExit()

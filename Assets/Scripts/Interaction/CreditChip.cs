@@ -6,12 +6,10 @@ public class CreditChip : InteractableBase, IInteractable
     private Vector3 rotationSpeed = new Vector3(0, 90, 0);
     private Space rotationSpace = Space.Self;
     public float destroyDelay = 0.5f;
-    private bool collected;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        collected = false;
         ui = FindAnyObjectByType<UIManager>();
     }
 
@@ -23,7 +21,6 @@ public class CreditChip : InteractableBase, IInteractable
     public override void Interact()
     {
         ui.AddCredits(100);
-        collected = true;
         // Disable visiblity and collision, even before it is properly destroyed, maybe i find sound effects
         MeshRenderer mr = GetComponent<MeshRenderer>();
         if (mr != null) mr.enabled = false;

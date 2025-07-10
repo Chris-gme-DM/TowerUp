@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactableName: CredChip
-  destroyDelay: 0.5
+  destroyDelay: 0.2
 --- !u!1001 &6999095113148018117
 PrefabInstance:
   m_ObjectHideFlags: 0

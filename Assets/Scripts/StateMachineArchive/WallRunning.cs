@@ -18,8 +18,6 @@ public class WallRunning : State
     public override void OnUpdate()
     {
         base.OnUpdate();
-        // Tell the responsible Controller
-        sc.DecrementWallInteractionTimer(Time.deltaTime);
     }
     public override void OnFixedUpdate()
     {
@@ -46,9 +44,6 @@ public class WallRunning : State
         // Pin the player to wall
         if (!(sc.leftWallrunEnabled && moveInput.sqrMagnitude > 0) && !(sc.rightWallrunEnabled && moveInput.sqrMagnitude > 0))
             rb.AddForce(-wallNormal*10, ForceMode.Force);
-        // Force the player from the wall as soon as the timer runs out
-        if(sc.wallRunTimer <= 0) 
-            rb.AddForce(wallNormal*pc.wallDisengageForce, ForceMode.Impulse); // Impulse may be appropriate, but i don't trust it
 
     }
 
