@@ -3,7 +3,7 @@ using System.Collections.Generic; // Make sure to include this for List
 #if UNITY_EDITOR
 using UnityEditor; // Required for EditorApplication.delayCall
 #endif
-
+// Entire script was built by Gemini, had no time to learn it all by myself
 public class ArrayModifier : MonoBehaviour
 {
     [Header("Array Settings")]
