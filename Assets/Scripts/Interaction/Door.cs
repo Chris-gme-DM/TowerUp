@@ -19,6 +19,7 @@ public class Door : InteractableBase
     // Doors need energy enabled before any function can be provided
     private bool isOpen;
     private bool powerEnabled;
+    private bool isUnlocked;
     //Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,19 +38,22 @@ public class Door : InteractableBase
         }
 
         manager = FindAnyObjectByType<UIManager>();
+        isUnlocked = false;
     }
     public override void Interact()
     {
         // Only opens if the player collected enough credits to pay the price
         // I should make the price Tag visible somehow
-        if (powerEnabled && manager.credits >= priceTag )
+        if (powerEnabled && ((manager.credits >= priceTag) || isUnlocked) )
         {
+            isUnlocked= true;
             //Take credit amount from player
             manager.AddCredits(-priceTag);
             isOpen = !isOpen;
             //Open the door
             // Plays animation
             animator.SetBool("isOpen", isOpen);
+            Invoke(nameof(Interact), 20f);
         }
     }
     // Do i even need that? Interfaces

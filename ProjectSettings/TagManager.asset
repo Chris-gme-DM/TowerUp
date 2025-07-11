@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Lights
+  - InstaDeath
   layers:
   - Default
   - TransparentFX
