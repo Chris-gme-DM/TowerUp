@@ -56,10 +56,6 @@ public class PlayerController : MonoBehaviour
                        // i should write an entire script only related to this administrative stuff
     [Range(0f, 30f)] public float wallDisengageForce; // Impulse setting, please act with caution
 
-    // you seem redundant
-    public float endWallRunTime;
-    public float endWallRunTimer;
-
     //limitations of wallrunning and climbing, should move to StateController, maybe
 
     #endregion
@@ -103,12 +99,6 @@ public class PlayerController : MonoBehaviour
         jumpPressed = false;
         rb.useGravity = true;
         credits = 0;
-    }
-    private void Update()
-    {
-        // Count EndWallRunTimer
-        if(endWallRunTimer > 0)
-            endWallRunTimer -= Time.deltaTime;
     }
     // Implemented a StateMachine Architecture, which turned StateHandler() and the movementStates unnecessary.
     public void onMove(InputAction.CallbackContext ctx)

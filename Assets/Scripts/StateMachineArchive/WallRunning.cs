@@ -50,7 +50,6 @@ public class WallRunning : State
     public override void OnExit()
     {
         base.OnExit();
-        pc.endWallRunTimer = pc.endWallRunTime;
         rb.maxLinearVelocity = 50f;
     }
 }

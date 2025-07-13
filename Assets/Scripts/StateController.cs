@@ -157,12 +157,12 @@ public class StateController : MonoBehaviour
             ChangeState(jumpingFromWall);
         }
         // Wallrunning
-        else if ((leftWallrunEnabled || rightWallrunEnabled) && pc.climbPressed && !isGrounded && AboveGround() && pc.endWallRunTimer <= 0 && !IsOnWallCooldown && hasStaminaForWallInteraction)// maybe i should move more things from playerController in here
+        else if ((leftWallrunEnabled || rightWallrunEnabled) && pc.climbPressed &&  AboveGround() && !IsOnWallCooldown && hasStaminaForWallInteraction)// maybe i should move more things from playerController in here
         {
             ChangeState(wallRunning);
         }
         // Climbing, i think i can use this in other Interactables or better Scalable objects, as soon as i create them
-        else if (frontWallClimbEnabled && pc.climbPressed && !leftWallrunEnabled && !rightWallrunEnabled && pc.endWallRunTimer <= 0 && !IsOnWallCooldown && hasStaminaForWallInteraction)
+        else if (frontWallClimbEnabled && pc.climbPressed && !leftWallrunEnabled && !rightWallrunEnabled && !IsOnWallCooldown && hasStaminaForWallInteraction)
         {
             ChangeState(climbWall);
         }

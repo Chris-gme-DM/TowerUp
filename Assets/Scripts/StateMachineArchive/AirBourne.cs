@@ -7,11 +7,12 @@ public class AirBourne : State
     private Vector3 horizontalVelocity;
     private Vector3 moveDirection;
 
-    public float rotationSpeed = 3.0f;
-    public float tiltAngle = 0f;
 
-    private Quaternion currentRotation;
-    private Quaternion targetRotation;
+    //public float rotationSpeed = 3.0f;
+    //public float tiltAngle = 0f;
+
+    //private Quaternion currentRotation;
+    //private Quaternion targetRotation;
 
     public override void OnEnter()
     {

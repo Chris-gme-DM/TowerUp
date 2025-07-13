@@ -30,7 +30,6 @@ public class ClimbWall : State
     {
         base.OnExit();
         rb.useGravity = true;
-        pc.endWallRunTimer = pc.endWallRunTime;
         pc.climbPressed = false;
         rb.maxLinearVelocity = 50f;
     }

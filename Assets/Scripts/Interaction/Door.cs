@@ -44,7 +44,13 @@ public class Door : InteractableBase
     {
         // Only opens if the player collected enough credits to pay the price
         // I should make the price Tag visible somehow
-        if (powerEnabled && ((manager.credits >= priceTag) || isUnlocked) )
+        if (isUnlocked)
+        {
+            animator.SetBool("isOpen", true);
+            // Close door automatically
+            Invoke(nameof(CloseDoor), 10f);
+        }
+        else if (powerEnabled && (manager.credits >= priceTag) && !isUnlocked)
         {
             isUnlocked= true;
             //Take credit amount from player
@@ -52,9 +58,18 @@ public class Door : InteractableBase
             isOpen = !isOpen;
             //Open the door
             // Plays animation
-            animator.SetBool("isOpen", isOpen);
-            Invoke(nameof(Interact), 20f);
+            animator.SetBool("isOpen", true);
+            // Close door automatically after 10s
+            Invoke(nameof(CloseDoor), 10f);
         }
+        else if(powerEnabled && (manager.credits < priceTag) && !isUnlocked)
+        {
+            manager.InsufficentCredit();
+        }
+    }
+    private void CloseDoor()
+    {
+        animator.SetBool("isOpen", false);
     }
     // Do i even need that? Interfaces
     public void OnPowerSwitchInteract()
