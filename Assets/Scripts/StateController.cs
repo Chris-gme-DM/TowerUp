@@ -146,13 +146,13 @@ public class StateController : MonoBehaviour
 
         // Just to force the player from the wall if they stick to it too long for my taste, i will add a froce that pushes them off the wall
         // so this is another redundancy in my eyes
-        //if((currentState == wallRunning || currentState == climbWall) && wallRunTimer <= 0)
-        //{
-        //    ChangeState(airBourne);
-        //    return;
-        //}
+        if((currentState == wallRunning || currentState == climbWall) && currentStamina <= 0)
+        {
+            ChangeState(jumpingFromWall);
+            return;
+        }
         // JumpFromWall
-        if ((leftWallrunEnabled || rightWallrunEnabled || frontWallClimbEnabled) && pc.jumpPressed && AboveGround() )
+        else if ((leftWallrunEnabled || rightWallrunEnabled || frontWallClimbEnabled) && pc.jumpPressed && AboveGround() )
         {
             ChangeState(jumpingFromWall);
         }

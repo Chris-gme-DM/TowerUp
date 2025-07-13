@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class CursorController
+public class CursorController : MonoBehaviour
 {
     void Start()
     {
