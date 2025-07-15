@@ -308049,7 +308049,7 @@ GameObject:
   - component: {fileID: 1605628057}
   - component: {fileID: 1605628058}
   m_Layer: 0
-  m_Name: PlayerStateController
+  m_Name: StateMachine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

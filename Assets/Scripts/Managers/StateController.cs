@@ -19,10 +19,10 @@ public class StateController : MonoBehaviour
     // the stamina system doesn't even need to be visible to the player
 
     [Header("Stamina System")]
-    [Range(0, 200)] public float maxStamina; // Max stamina capacity
+    [Range(0, 200)] public float maxStamina; // Max stamina capacity currently 100, maybe 80 is a good point
     public float currentStamina; // Current stamina
-    [Range(0, 20)] public float staminaRegenRate; // Stamina regenerated per second
-    [Range(0, 100)] public float wallInteractionStaminaCost; // Stamina consumed per second while on wall
+    [Range(0, 20)] public float staminaRegenRate; // Stamina regenerated per second, currently 15
+    [Range(0, 100)] public float wallInteractionStaminaCost; // Stamina consumed per second while on wall, currently 25
 
     [Header("CollisionChecks")]
     public LayerMask Ground;
@@ -36,9 +36,9 @@ public class StateController : MonoBehaviour
     public RaycastHit frontWallHit;
 
     // Circumstances made a spherecast check for GroundCheck neccessary
-    public float groundSphereRadius;
+    public float groundSphereRadius; // currently 0.6
     // PlayerHeight to Check Raycast Hit on Ground
-    public float playerHeight;
+    public float playerHeight; // 2f
     // to check which side the wall is closest to determine if wallrun or climb should be enabled
     public bool leftWallrunEnabled;
     public bool rightWallrunEnabled;
@@ -51,18 +51,18 @@ public class StateController : MonoBehaviour
     public bool anyWallDetected => leftWallDetected || rightWallDetected || frontWallDetected;
     // Angle thresholds for wall types // AI that wasn't a bad solution after all, tired
     [Header("Wall Type Detection")]
-    [Range(0, 180)] public float minWallRunAngle; // Angle between player forward and wall normal
-    [Range(0, 180)] public float maxWallRunAngle; // Perfect wall run is 90 degrees
-    [Range(0, 180)] public float minClimbAngle;    // Angle between player forward and wall normal 
-    [Range(0, 180)] public float maxClimbAngle;   // Perfect climb is 0 degrees (straight wall), // if you rotate 180 degress (its 180 deg)
+    [Range(0, 180)] public float minWallRunAngle; // Angle between player forward and wall normal, currently 70
+    [Range(0, 180)] public float maxWallRunAngle; // Perfect wall run is 90 degrees, currently 150
+    [Range(0, 180)] public float minClimbAngle;    // Angle between player forward and wall normal , currently 120
+    [Range(0, 180)] public float maxClimbAngle;   // Perfect climb is 0 degrees (straight wall), // if you rotate 180 degress (its 180 deg), currently 180
 
-    public float wallCheckDistance;
-    public float minJumpHeight;
+    public float wallCheckDistance; // 1f
+    public float minJumpHeight; // 2f
     public bool isGrounded;
 
     [Header("Cooldowns")]
     // common Timer needed to not make climb and wallrun combo abusable
-    [Range(0, 5f)] public float wallRunClimbCooldown;
+    [Range(0, 5f)] public float wallRunClimbCooldown; // 0.5f
     private float wallRunClimbCooldownTimer;
     public bool IsOnWallCooldown;
 
@@ -143,7 +143,6 @@ public class StateController : MonoBehaviour
     {
         currentState?.OnStateFixedUpdate();
     }
-    #region Statechecks
     private void CheckState()
     {
         GroundCheck();
@@ -197,7 +196,6 @@ public class StateController : MonoBehaviour
         }
 
     }
-    #endregion
     #region Checks for Statecheck
     public LayerMask CombinedLayerMasks()
     {
