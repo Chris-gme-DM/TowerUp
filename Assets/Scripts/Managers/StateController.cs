@@ -205,6 +205,7 @@ public class StateController : MonoBehaviour
     {
         Vector3 sphereOrigin = rb.transform.position + Vector3.up * groundSphereRadius;
         RaycastHit hit ;
+        // the sphere cast is due to the player getting stuck between fallen storage boxes and to climb on top of walls that have a platform
         isGrounded = Physics.SphereCast(sphereOrigin, groundSphereRadius, Vector3.down, out hit, playerHeight * 0.6f, combinedRunnableMasks); 
         return isGrounded ;
     }
@@ -219,14 +220,18 @@ public class StateController : MonoBehaviour
         frontWallDetected = false;
 
         // LeftWallCheck
+        // Raycast is shot to the left of the player and checks if it hits a wall
         if (Physics.Raycast(cameraTransform.transform.position, -cameraTransform.transform.right, out leftWallHit, wallCheckDistance, Wall))
         {
+            // if thats the case it detects a wal to the left of the player
             leftWallDetected = true;
+            // Computes the angle of the character viewpoint in comparison to the wall's normal. if it is within a certain threshhold it enables the wallrun in that direction
             float angle = Vector3.Angle(cameraTransform.forward, leftWallHit.normal);
             if (angle >= minWallRunAngle && angle <= maxWallRunAngle)
                 leftWallrunEnabled = true;
         }
         // RighWallCheck
+        // compare with LeftWallCheck
         if (Physics.Raycast(cameraTransform.transform.position, cameraTransform.transform.right, out rightWallHit, wallCheckDistance, Wall))
         {
             rightWallDetected = true;
@@ -243,10 +248,12 @@ public class StateController : MonoBehaviour
                 frontWallClimbEnabled = true;
         }
     }
+    // Used to set the condition for wallrun
     private bool AboveGround()
     {
         return !Physics.Raycast(rb.transform.position, Vector3.down, minJumpHeight, Ground);
     }
+    // A cooldown to smooth between WallInteractions
     public void WallRunClimbCooldown()
     {
         if (IsOnWallCooldown)
@@ -259,15 +266,19 @@ public class StateController : MonoBehaviour
         }
     }
 #endregion
+    // Changes the state according to CheckState()
     public void ChangeState(State newState)
     {
         if(newState == currentState) return;
 
+        // to ensure the last state is exited correctly
         State previousState = currentState;
+        // to determine if the player is still in a wallInteraction for stamina usage purposes
         bool wasInWallState = (previousState == wallRunning || previousState == climbWall);
         bool entersWallState = (newState == wallRunning || newState == climbWall);
         bool entersJumpFromWall = (newState == jumpingFromWall);
 
+        // To reset The wallRun Cooldown
         if ((wasInWallState || (previousState == jumpingFromWall)) && (!entersWallState && !anyWallDetected) || entersJumpFromWall)
         {
             wallRunClimbCooldownTimer = wallRunClimbCooldown;
@@ -278,6 +289,7 @@ public class StateController : MonoBehaviour
         currentState = newState;
         currentState.OnStateEnter(this, pc);
     }
+    // public Getter for the states, useful as soon as i refactor the scripts
     public void SetMoveInput(Vector2 moveInput)
     {
         currentInput = moveInput;

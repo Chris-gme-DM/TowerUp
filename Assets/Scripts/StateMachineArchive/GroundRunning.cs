@@ -22,8 +22,10 @@ public class GroundRunning : State
         {
             if (moveDirection.magnitude > 0.01f)
             {
+                // I like Physics, so I use Inertia in the player movements
                 rb.AddForce(moveDirection * pc.accelaration, ForceMode.Force);
             }
+            // Clamp max velocity, settings are found in PlayerController and can be adjusted in inspector
             if(horizontalVelocity.magnitude > pc.groundSpeed)
             {
                 Vector3 limitedHorizonatlVelocity = horizontalVelocity.normalized * pc.groundSpeed;

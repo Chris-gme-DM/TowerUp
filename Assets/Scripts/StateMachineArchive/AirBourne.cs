@@ -16,6 +16,7 @@ public class AirBourne : State
     public override void OnUpdate()
     {
         base.OnUpdate();
+        // Self explanatory
         moveDirection = cameraTransform.right * moveInput.x + cameraTransform.forward * moveInput.y;
         moveDirection = Vector3.ProjectOnPlane(moveDirection, Vector3.up).normalized;
 
@@ -32,8 +33,10 @@ public class AirBourne : State
         {
             if (moveDirection.magnitude > 0.01f)
             {
+                // I like physics so I use Inertia
                 rb.AddForce(moveDirection * pc.accelaration*0.1f, ForceMode.Force);
             }
+            // i set a max velocity although this needs to be reevaluated
             if (horizontalVelocity.magnitude > pc.groundSpeed)
             {
                 Vector3 limitedHorizonatlVelocity = horizontalVelocity.normalized * pc.groundSpeed;

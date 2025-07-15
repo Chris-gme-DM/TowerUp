@@ -22,8 +22,9 @@ public class WallRunning : State
         // horizontal velocity
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0 , rb.linearVelocity.z);
 
+        // to get the wall's normal it gets the information from the state controller
         Vector3 wallNormal = sc.rightWallrunEnabled ? sc.rightWallHit.normal : sc.leftWallHit.normal;
-
+        // to determine in which direction the force is supposed to be applied to
         Vector3 wallForward = Vector3.Cross(wallNormal, rb.transform.up);
 
         // To determin the direction the player wants to run along the wall
