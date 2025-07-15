@@ -25,35 +25,35 @@ public class PlayerController : MonoBehaviour
     // Values to set for developer in Unity
     [Header("Movement")]
     // Accelaration Value
-    [Range(0f, 50f)] public float accelaration;
+    [Range(0f, 50f)] public float accelaration; // 50
     // Decelaration Value
-    [Range(0f, 50f)] public float decelaration;
+    [Range(0f, 50f)] public float decelaration; // 45
     // To allow the setting of character movement Speed in Unity
     // Max Speed variable, conditional upon settings of different states
-    [Range(0f, 50f)] public float maxSpeed;
+    [Range(0f, 50f)] public float maxSpeed; // 40
     // Speed when character is running on ground
-    [Range(0f, 50f)] public float groundSpeed;
+    [Range(0f, 50f)] public float groundSpeed; // 10
     // Speed when the character is on a slope
  //ADD IF time >= 0   [Range(0f, 50f)] public float maxSlopeSpeed;
     // Speed when the character is Wallrunning
 
     [Header("Jumping")]
     // To allow the setting of character Jump Force in Unity
-    [Range(0f, 30f)] public float jumpForce;  // IMPULSE SETTING, be responsible
+    [Range(0f, 30f)] public float jumpForce;  // IMPULSE SETTING, be responsible , 7f
     // A Cooldwn for the JumpAction
-    [Range(0f, 1f)] public float jumpCooldown;
+    [Range(0f, 1f)] public float jumpCooldown; // 0.8f
 
     [Header("WallRun")]
-    [Range(0f, 500f)] public float wallRunForce;
-    [Range(0f, 50f)] public float wallRunSpeed;
+    [Range(0f, 500f)] public float wallRunForce; // 20
+    [Range(0f, 50f)] public float wallRunSpeed; // 12
 
     [Header("Climbing")]
-    [Range(0f, 500f)] public float wallClimbForce;
-    [Range(0f, 50f)] public float wallClimbSpeed;
+    [Range(0f, 500f)] public float wallClimbForce; // 40
+    [Range(0f, 50f)] public float wallClimbSpeed; // 4
 
     [Header("Limits")] // these are set here to keep Player related stuff as much as possible here.
                        // i should write an entire script only related to this administrative stuff
-    [Range(0f, 30f)] public float wallDisengageForce; // Impulse setting, please act with caution
+    [Range(0f, 30f)] public float wallDisengageForce; // Impulse setting, please act with caution , 20 i think this one has become obsolete
 
     #endregion
     #region Booleans

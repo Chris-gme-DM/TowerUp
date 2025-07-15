@@ -253850,7 +253850,7 @@ MonoBehaviour:
   cameraTransform: {fileID: 0}
   accelaration: 50
   decelaration: 45
-  maxSpeed: 30
+  maxSpeed: 40
   groundSpeed: 10
   jumpForce: 7
   jumpCooldown: 0.8
