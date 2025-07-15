@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
@@ -12,7 +13,6 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     public StateController stateController;
     public InteractionManager interactionManager;
-    public GameObject CreditsUI;
     // Variables for Script
     // Reference to Player Input
     public PlayerInput playerInput;
@@ -22,7 +22,6 @@ public class PlayerController : MonoBehaviour
     public Vector2 moveInput;
     // Reference for the camera to Enable look around
     public Transform cameraTransform;
-    public int credits;
     // Values to set for developer in Unity
     [Header("Movement")]
     // Accelaration Value
@@ -56,8 +55,6 @@ public class PlayerController : MonoBehaviour
                        // i should write an entire script only related to this administrative stuff
     [Range(0f, 30f)] public float wallDisengageForce; // Impulse setting, please act with caution
 
-    //limitations of wallrunning and climbing, should move to StateController, maybe
-
     #endregion
     #region Booleans
     // To set a condition to check if the player is on a ground surface
@@ -71,8 +68,7 @@ public class PlayerController : MonoBehaviour
     //IF time > 0   public bool slidePressed;
     #endregion
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    void Awake()
     {
         //Get Rigidbody and PlayerInput for access
         playerInput = GetComponent<PlayerInput>();
@@ -89,16 +85,14 @@ public class PlayerController : MonoBehaviour
         playerInput.actions["Move"].canceled += onMove;
         playerInput.actions["Jump"].performed += onJump;
         playerInput.actions["Interact"].performed += onInteractPerformed;
-        playerInput.actions["Interact"].canceled -= onInteractPerformed;
         playerInput.actions["Climb"].performed += onClimb;
-        playerInput.actions["Climb"].canceled -= onClimb;
+        playerInput.actions["Climb"].canceled += onClimb;
         //Define Camera transformation, in this case the camera is locked to the player
         cameraTransform = Camera.main.transform;
         // Set Jumpability
         canJump = true;
         jumpPressed = false;
         rb.useGravity = true;
-        credits = 0;
     }
     // Implemented a StateMachine Architecture, which turned StateHandler() and the movementStates unnecessary.
     public void onMove(InputAction.CallbackContext ctx)
@@ -114,12 +108,20 @@ public class PlayerController : MonoBehaviour
         // Only Jump if it's not on cooldown and the Player is Grounded
         // Sets Jumping to true and together with the state if the player is on ground or not fires respective State
         if(canJump)
-        { 
-            canJump = false;
+        {
             jumpPressed = true;
+            // Only set jumpPressed true momentarily, since Gametest found that exploits were possible, but conflicts with the Cooldown arose
+            StartCoroutine(SetJumpPressedMomentarily());
+            canJump = false;
         }
         //Set a Cooldown for the Jump
         Invoke(nameof(ResetJump), jumpCooldown);
+    }
+    private IEnumerator SetJumpPressedMomentarily()
+    {
+            yield return new WaitForSeconds(0.1f);
+            jumpPressed = false;
+
     }
     // MOVE to JumpFromWall and JumpFrom Ground
     // A Jump Reset to not abuse the Jump mehcanic and make Wall Runs smoother
@@ -135,7 +137,10 @@ public class PlayerController : MonoBehaviour
     }
     public void onClimb(InputAction.CallbackContext ctx)
     {
-        if(ctx.performed) climbPressed = true;
-        if(ctx.canceled) climbPressed = false;
+        if (ctx.performed)
+            climbPressed = true;
+        else if (ctx.canceled)
+            climbPressed = false;
+        
     }
 }

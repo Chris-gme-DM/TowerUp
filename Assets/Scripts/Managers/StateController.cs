@@ -4,6 +4,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.XR;
 // I just want to keep my States clean
 // Needs Update to hinder player from abusing wall climb
+// i have a lot of publics in my scripts because i haven't yet refactored these fields and or methods
+// another reason is that i had many scripts that rely on the information of these fields but i created a lot of redundancies while working on the script
 // AI additions are obvious i guess, otherwise the stamina system was worked out with Gemini due to time restraints
 public class StateController : MonoBehaviour
 {
@@ -17,17 +19,17 @@ public class StateController : MonoBehaviour
     // the stamina system doesn't even need to be visible to the player
 
     [Header("Stamina System")]
-    [Range(0, 200)] public float maxStamina = 100f; // Max stamina capacity
+    [Range(0, 200)] public float maxStamina; // Max stamina capacity
     public float currentStamina; // Current stamina
-    [Range(0, 20)] public float staminaRegenRate = 10f; // Stamina regenerated per second
-    [Range(0, 100)] public float wallInteractionStaminaCost = 20f; // Stamina consumed per second while on wall
+    [Range(0, 20)] public float staminaRegenRate; // Stamina regenerated per second
+    [Range(0, 100)] public float wallInteractionStaminaCost; // Stamina consumed per second while on wall
 
     [Header("CollisionChecks")]
     public LayerMask Ground;
     public LayerMask Wall;
     public LayerMask Scalable;
-
-    public LayerMask combinedRunnableMasks;
+    // A custom LayerMask i use to interact with Ground and Scalable Objects to enable the player to move on crates, etc.
+    public LayerMask combinedRunnableMasks; 
 
     public RaycastHit leftWallHit;
     public RaycastHit rightWallHit;
@@ -100,6 +102,14 @@ public class StateController : MonoBehaviour
         currentStamina = maxStamina; // Initialize stamina
         combinedRunnableMasks = Ground | Scalable;
         ChangeState(idleState);
+
+        // Default Settings if i forget to set values
+        if(maxStamina == 0 || staminaRegenRate == 0 || wallInteractionStaminaCost == 0)
+        {
+            maxStamina = 100;
+            staminaRegenRate = 10;
+            wallInteractionStaminaCost = 20;
+        }
     }
     // Update is called once per frame
     void Update()
@@ -125,8 +135,7 @@ public class StateController : MonoBehaviour
         // Force player off wall if stamina runs out
         if ((currentState == wallRunning || currentState == climbWall) && currentStamina <= 0 && !IsOnWallCooldown)
         {
-            Debug.Log($"StateController: Wall interaction limit reached (Stamina: {currentStamina:F2}). Forcing JumpFromWall state.");
-            ChangeState(jumpingFromWall); // Changed from airBourne to jumpingFromWall
+            ChangeState(jumpingFromWall); // Changed from airBourne to jumpingFromWall to force the player away
             return; // Important: return after changing state to prevent immediate re-evaluation in CheckState this frame.
         }
     }
@@ -265,7 +274,6 @@ public class StateController : MonoBehaviour
         {
             wallRunClimbCooldownTimer = wallRunClimbCooldown;
             IsOnWallCooldown = true;
-            Debug.Log("StateController: Activated Wall Cooldown due to leaving wall or jumping.");
         }
 
         previousState?.OnStateExit();

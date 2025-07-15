@@ -138735,7 +138735,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &710891002
 Transform:
   m_ObjectHideFlags: 0
@@ -208267,6 +208267,10 @@ PrefabInstance:
       value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 2282259831740141648, guid: a3bfb9b606c94054290c12c2b375b461, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 21.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 2282259831740141648, guid: a3bfb9b606c94054290c12c2b375b461, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -23.261
       objectReference: {fileID: 0}
@@ -253840,12 +253844,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   stateController: {fileID: 1605628058}
   interactionManager: {fileID: 1073996641}
-  CreditsUI: {fileID: 0}
   playerInput: {fileID: 0}
   rb: {fileID: 0}
   moveInput: {x: 0, y: 0}
   cameraTransform: {fileID: 0}
-  credits: 0
   accelaration: 50
   decelaration: 45
   maxSpeed: 30
