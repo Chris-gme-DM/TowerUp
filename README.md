@@ -30,12 +30,12 @@ Controls were set via Input Action System in unity6. So far full control is rest
 There is no Tutorial (so far, since I don't like to hold players hands, but I admit that the controls are tricky to get used to)
 
 ++ Controls ++
-WASD - Move
-Look - Mouse
-SPACE - Jump                    Jump from the ground, or from the wall, if player is running or climbing along the wall
-SHIFT - Climb                   This can initate WallRun and WallClimb, depending on how the player looks at the wall. Since I used angles to differentiate between the possible States, this requires some playing around
+ + WASD - Move
+ + Look - Mouse
+ + SPACE - Jump                    Jump from the ground, or from the wall, if player is running or climbing along the wall
+ + SHIFT - Climb                   This can initate WallRun and WallClimb, depending on how the player looks at the wall. Since I used angles to differentiate between the possible States, this requires some playing around
                                 Look more or less directly at a wall to climb, to wallrun look to either side, depending which side you want to run along
-E - Interact                    To initiate Interaction the player needs to look at the object and come into range with interactable objects.
+ + E - Interact                    To initiate Interaction the player needs to look at the object and come into range with interactable objects.
 
 There is an invisible Stamina System for the player to limit the use of the Wallrun and Climb features. these Interactions require stamina, which is regenerated in every other state the player can be in.
 
@@ -46,28 +46,28 @@ There is an invisible Stamina System for the player to limit the use of the Wall
 If anything went wrong with the import of the project: My hierarchy should be listed in the GameScene as follows:
 ===== Administrative =====
 + objects like player and several managers +
-===== UI =====
-+ UIManager +
-+ Canvas +
-===== Level =====
-+ objects for level restrictions or lighting +
-==== Door/Switch ====
-+ Door and Switch Pairings +
-==== Misc ==== Miscellaneous
-+ CreditChips +
-+ StorageBoxes +
-+ etc. +
-==== Floor/Structures ====
++ ===== UI =====
++ UIManager
++ Canvas
++ ===== Level =====
++ objects for level restrictions or lighting
++ ==== Door/Switch ====
++ Door and Switch Pairings 
++ ==== Misc ==== Miscellaneous
++ CreditChips 
++ StorageBoxes 
++ etc. 
++ ==== Floor/Structures ====
 I hope i manage this part more carefully and add Layers of object desriptions, the current hierarchy is honestly a mess
 + BaseFloor + Thes are just the base floor tile arrays.
 + Floor + Base Floor objects
-  + floor objects +
-+ Floor(1) +
-  + floor objects +
+  + floor objects 
++ Floor(1) 
+  + floor objects 
 ... I think You see where i am going with this. I thought about inner structuring of these layers, like general walls and floor tiles. A pattern that came to mind was to creat Parcours Patterns of walls and other objects, releveant to a certain pattern of obstacles.
-    To reuse these patterns in other üparts of the project, could be made into prefabs.
+    To reuse these patterns in other parts of the project, could be made into prefabs.
 ==== OuterWalls ====
-+ wall structures to pen the player in +
++ wall structures to pen the player in 
 
 ++ Possible Adjustments ++
 
