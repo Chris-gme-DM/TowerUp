@@ -9,6 +9,7 @@ Vision: Cyberpunk Setting, Exploration and Puzzle Solving, Parcours, First Perso
 Goals: Fun experience in exploration and figuring out the controls
 Contributors: Music by Jeremy Froböse (Available in the asset store), other people that helped
 Supporting programs: Adobe Substance Painter, blender, Gemini AI
+Sources: blender, Adobe Substance Painter 3D, Unity Asset Store, Adobe Substance Painter Asset Store
 
 
 +++ General +++
@@ -21,6 +22,7 @@ Every switch enables/disables one door. She needs to find credit Chips as well, 
 In regard to the school assignment my interactions are WallRun, WallClimb, Switch to enable the door, the doors themselves, CreditChips the player needs to collect.
 The objects i created are: Doors, Switches, basice wall ( which i don't count to the required 5 objects), Storage Box, Credit Chips, Ladder. The Gangway isn't implemented since the baking process and the way the controls turned out, made an implementation not feasable for the time being.
 
+I used public fields in many places of the script in which it is either detremental or obsolete, but I will deal with this in the future. 
 
 +++ Player +++
 First Person Perspective
@@ -79,6 +81,7 @@ PlayerController: Here you can adjust all the forces that impact player movement
 If i forgot to set any default values, play around with the given Ranges.
 State Controller: That's an entirely different beast, please look into the script if any values are not set.
 In general I add comments in these scripts and update this document to advisable values.
+If, for any reason, the "Climb" Action is not on InputSystem_Action Map. Go to Assets >> InputSystem_Actions[ActionMap] and add "Climb", set SHIFT as the button and add no interactions in the button settings
 
 + Layer Masks +
 The LayerMasks "Ground", "Wall", "Interactable", "Scalable", "Obstacle" are sometimes crucial to the functions. Walls are walls, i hope i don't need to describe what that is, Interactbales are CreditChips, Doors, Switches, so far
@@ -98,4 +101,7 @@ I identified the assignment and made a plan. To ignore my plan and incrementally
 + InteractionManager + Was at one point a functional Collector of possible Interactable and scaled to a point in which thinks like "Hack through certain walls", "Grappling Hook Points" , [insert many ideas]... but i wrongfully accused this to be the source of my
   Interaction problem and reduced my work to ashes and implemented the easiest form of the interaction manager i can think of. Interactables are ScriptableObjects now. Boring. Sorry, I needed this.
 + Objects + Spent days to work out the objects in blender, unwrapped UV-Maps, exported those into the project and Substance Painter. I don't think i used any special techniques for this.
-+ Leveldesign + A bit late, and it shows. I was exhausted and frankly out of my comfort zone. I had several sections of any given Level in mind. 
++ Leveldesign + A bit late, and it shows. I was exhausted and frankly out of my comfort zone. I had several sections of any given Level in mind.
+  Since i needed  a lot of objects of the same prefab, i scripted an Editor Script "ArrayModifier" with the help of Gemini. The way this works: you create a new empty object on the floor you want it to originate, since the floors give a base height to all objects   on the given floor. Place the origin in the position you want objects to originate from. Add the ArrayModifier Script. Place a prefab or object you want to array in the slot. adjust the settings until you are satisfied with the array. Remove the ArrayModifier     Script to "apply" the Modifier. Do not use the arrayableObejects prefab.
+
++++ Thanks for playing the Demo and let me know what you think of it +++
